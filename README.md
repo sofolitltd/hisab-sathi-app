@@ -1,6 +1,6 @@
-# Baki Khata
+# হিসাব সাথী
 
-দোকানের পাওনা ও দেনার হিসাব রাখার অ্যান্ড্রয়েড অ্যাপ। Flutter, অফলাইন-ফার্স্ট (SQLite), চাইলে অনলাইন ব্যাকআপ ও সিঙ্ক।
+ব্যক্তিগত দেনা-পাওনার হিসাব রাখার অ্যান্ড্রয়েড অ্যাপ। Flutter, অফলাইন-ফার্স্ট (SQLite), চাইলে অনলাইন ব্যাকআপ ও সিঙ্ক।
 
 - সাইট ও ডাউনলোড: https://bakikhatabd.vercel.app
 - সার্ভার (API): [sofolitltd/baki-khata-api](https://github.com/sofolitltd/baki-khata-api)
@@ -22,7 +22,7 @@ make run      # লোকাল API সার্ভার চালু (../baki-
 ```
 
 সার্ভারের ঠিকানা বদলাতে: `flutter run --dart-define=API_URL=https://...`
-রিলিজ বিল্ডে ডিফল্ট ঠিকানা [lib/config.dart](lib/config.dart)-এ।
+রিলিজ বিল্ডে ডিফল্ট ঠিকানা [lib/core/config.dart](lib/core/config.dart)-এ।
 
 ## রিলিজ বিল্ড
 `android/key.properties` (গিটে নেই) আর কীস্টোর থাকতে হবে, নইলে ডিবাগ কী দিয়ে সাইন হয়।

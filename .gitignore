@@ -53,3 +53,4 @@ android/key.properties
 *.keystore
 .env*
 android/.kotlin/
+/android/build/

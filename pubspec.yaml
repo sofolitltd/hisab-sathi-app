@@ -1,5 +1,5 @@
-name: baki_khata
-description: "Baki Khata — দোকানের পাওনা ও দেনার হিসাব।"
+name: dena_pawna
+description: "হিসাব সাথী — ব্যক্তিগত দেনা-পাওনার হিসাব।"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -129,21 +129,15 @@ flutter:
 flutter_launcher_icons:
   image_path: assets/logo/icon.png
   android: true
-  ios: true
-  remove_alpha_ios: true
+  ios: false
   min_sdk_android: 21
-  adaptive_icon_background: "#0F766E"
+  adaptive_icon_background: "#F8FAFC"
   adaptive_icon_foreground: assets/logo/icon_foreground.png
-  web:
-    generate: true
-    image_path: assets/logo/icon.png
-    background_color: "#0F766E"
-    theme_color: "#0F766E"
 
 flutter_native_splash:
-  color: "#0F766E"
+  color: "#F8FAFC"
   image: assets/logo/splash.png
   android_12:
-    color: "#0F766E"
+    color: "#F8FAFC"
     image: assets/logo/icon_foreground.png
   web: true
