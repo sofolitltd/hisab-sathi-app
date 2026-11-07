@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/features/customer_detail/customer_navigation.dart';
-import 'package:dena_pawna/features/customers/widgets/customer_card.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_navigation.dart';
+import 'package:hisab_sathi/features/customers/widgets/customer_card.dart';
 
 /// নাম বা মোবাইল লিখলে মিলে যাওয়া কাস্টমারের সাজেশন তালিকা; ট্যাপ করলে খাতা খোলে।
 class CustomerSearch extends StatefulWidget {

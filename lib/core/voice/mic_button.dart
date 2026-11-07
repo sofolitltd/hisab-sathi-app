@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
 
 /// মাইক বাটন: চাপলে শোনা শুরু, আবার চাপলে থামে। বলা কথা [onText]-এ আসে।
 class MicButton extends StatefulWidget {

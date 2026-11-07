@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:dena_pawna/core/voice/voice.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
 
 /// বড় টাকার ঘর — বাংলা/ইংরেজি অঙ্ক, আর মাইকে বলে লেখা।
 class AmountField extends StatelessWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/models/models.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/models/models.dart';
 
 /// ইতিহাস বদলালে নিজে থেকে আবার পড়ে নেয়।
 mixin LogsLoader<T extends StatefulWidget> on State<T> {

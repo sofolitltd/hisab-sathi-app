@@ -7,12 +7,12 @@ import 'package:pdf/pdf.dart' show PdfPageFormat;
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart' show Printing;
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
 
 part 'slip_layout.dart';
 part 'slip_painter.dart';

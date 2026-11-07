@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/features/customers/people_list_page.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/features/customers/people_list_page.dart';
 
 /// একসাথে পাওনা আর দেনা দুটোই দেখায় — আগে একবারে একটাই (সক্রিয় মোড অনুযায়ী)
 /// দেখাতো, এখন কোনো গ্লোবাল মোড নেই তাই দুটোই পাশাপাশি।

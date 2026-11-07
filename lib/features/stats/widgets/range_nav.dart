@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/stats/stats_period.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/stats/stats_period.dart';
 
 /// ‹ তারিখ › — তীরে আগে-পিছে, মাঝে চাপলে ক্যালেন্ডার।
 class RangeNav extends StatelessWidget {

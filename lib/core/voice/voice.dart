@@ -2,15 +2,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/bangla_numbers.dart';
-import 'package:dena_pawna/core/voice/phonetic.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/bangla_numbers.dart';
+import 'package:hisab_sathi/core/voice/phonetic.dart';
 
-export 'package:dena_pawna/core/voice/bangla_numbers.dart';
-export 'package:dena_pawna/core/voice/mic_button.dart';
-export 'package:dena_pawna/core/voice/phonetic.dart';
+export 'package:hisab_sathi/core/voice/bangla_numbers.dart';
+export 'package:hisab_sathi/core/voice/mic_button.dart';
+export 'package:hisab_sathi/core/voice/phonetic.dart';
 
 /// ফোনের নিজস্ব TTS দিয়ে পুরোটা বাংলা ভয়েসে পড়ে শোনায় — ইংরেজিতে লেখা নামও।
 /// (নামগুলো ইংরেজি ভয়েসে পড়লে তালিকা শুনতে অদ্ভুত লাগে।)

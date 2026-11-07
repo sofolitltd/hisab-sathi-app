@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/widgets/pin_field.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/widgets/pin_field.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
 
 /// লগইন ও সাইন আপ — ফোন নাম্বার + ৫ ডিজিটের PIN (বিকাশের মতো)।
 /// লগইন বাধ্যতামূলক না — প্রোফাইল থেকে ইচ্ছামতো পুশ করা একটা সাধারণ রুট,

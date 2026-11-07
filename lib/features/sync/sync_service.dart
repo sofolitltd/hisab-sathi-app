@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
-import 'package:dena_pawna/features/sync/sync_api.dart';
-import 'package:dena_pawna/features/sync/sync_pin_store.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/sync/sync_api.dart';
+import 'package:hisab_sathi/features/sync/sync_pin_store.dart';
 
 /// লোকাল SQLite ↔ অনলাইন সার্ভার সিঙ্ক। অ্যাপ আগের মতো অফলাইনেই চলে;
 /// ইন্টারনেট থাকলে `dirty` রেকর্ড পাঠায়, আর সার্ভারের নতুন পরিবর্তন নামায়।

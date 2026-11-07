@@ -1,4 +1,4 @@
-import 'package:dena_pawna/core/utils/utils.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
 
 const _w = [
   'শূন্য',

@@ -1,5 +1,5 @@
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/model_utils.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/model_utils.dart';
 
 /// baki = দিলাম (balance বাড়ে), joma = পেলাম (balance কমে) — সব দিকের জন্য একই।
 enum EntryType { baki, joma }

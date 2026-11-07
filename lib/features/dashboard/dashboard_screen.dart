@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/customers/customer_filters.dart';
-import 'package:dena_pawna/features/dashboard/widgets/customer_list.dart';
-import 'package:dena_pawna/features/dashboard/widgets/customer_search.dart';
-import 'package:dena_pawna/features/dashboard/widgets/hero_card.dart';
-import 'package:dena_pawna/features/dashboard/widgets/info_card.dart';
-import 'package:dena_pawna/features/dashboard/widgets/recent_tile.dart';
-import 'package:dena_pawna/features/dashboard/widgets/section_title.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/customers/customer_filters.dart';
+import 'package:hisab_sathi/features/dashboard/widgets/customer_list.dart';
+import 'package:hisab_sathi/features/dashboard/widgets/customer_search.dart';
+import 'package:hisab_sathi/features/dashboard/widgets/hero_card.dart';
+import 'package:hisab_sathi/features/dashboard/widgets/info_card.dart';
+import 'package:hisab_sathi/features/dashboard/widgets/recent_tile.dart';
+import 'package:hisab_sathi/features/dashboard/widgets/section_title.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key, required this.onSeeAll});

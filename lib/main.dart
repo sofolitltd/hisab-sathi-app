@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
-import 'package:dena_pawna/app.dart';
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/notifications/notifier.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
-import 'package:dena_pawna/features/sync/sync_service.dart';
+import 'package:hisab_sathi/app.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/notifications/notifier.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/sync/sync_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,5 +15,5 @@ Future<void> main() async {
   Notifier.onExactGranted = Store.instance.rescheduleAll;
   await AuthService.instance.init();
   await SyncService.instance.init();
-  runApp(const BakiKhataApp());
+  runApp(const HisabSathiApp());
 }

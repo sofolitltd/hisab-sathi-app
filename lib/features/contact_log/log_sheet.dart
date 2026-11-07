@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/features/contact_log/contact_actions.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/features/contact_log/contact_actions.dart';
 
 /// কী বলল — এক চাপে নোটে বসানোর জন্য।
 const _quickTags = [

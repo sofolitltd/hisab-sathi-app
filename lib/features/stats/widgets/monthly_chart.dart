@@ -3,10 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/features/stats/stats_period.dart';
-import 'package:dena_pawna/features/stats/widgets/stats_section.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/features/stats/stats_period.dart';
+import 'package:hisab_sathi/features/stats/widgets/stats_section.dart';
 
 class MonthlyChart extends StatelessWidget {
   const MonthlyChart({super.key, required this.months, required this.ledger});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
 
 /// রিমাইন্ডারের সময় বাছাইয়ের ঘড়ি। বাতিল করলে null।
 Future<TimeOfDay?> pickReminderTime(BuildContext context, TimeOfDay initial) =>

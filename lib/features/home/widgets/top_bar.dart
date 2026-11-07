@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/features/sync/sync_button.dart';
+import 'package:hisab_sathi/features/sync/sync_button.dart';
 
 /// উপরের বার — লোগো, অ্যাপের নাম আর সিঙ্ক বাটন। আগে এখানে পাওনা/দেনা মোড
 /// সুইচ ছিল; সেটা সরানো হয়েছে যাতে প্রতিটা ট্যাব একটাই, সরাসরি লিস্ট দেখায়।

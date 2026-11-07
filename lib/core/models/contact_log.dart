@@ -1,4 +1,4 @@
-import 'package:dena_pawna/core/models/model_utils.dart';
+import 'package:hisab_sathi/core/models/model_utils.dart';
 
 /// কাস্টমারের সাথে যোগাযোগের ধরন। `due` = "কবে দেবে" তারিখ বদল, নিজে থেকে লেখা হয়।
 /// পুরোনো অ্যাপ অচেনা ধরনকে note হিসেবে পড়ে, তাই নোটের লেখা নিজেই বোঝা যায়।

@@ -1,9 +1,9 @@
-# দেনা পাওনা (formerly Baki Khata) — handover (updated 2026-11-07)
+# হিসাব সাথী (formerly দেনা পাওনা / Baki Khata) — handover (updated 2026-11-07)
 
-No secrets in this file. Secrets live in `baki-khata-api/.env*`, Vercel env vars, and `~/.baki_khata/`.
+No secrets in this file. Secrets live in `hisab-sathi-api/.env*`, Vercel env vars, and `~/.baki_khata/`.
 
 ## What it is
-Bangla personal দেনা-পাওনা (debt/credit) tracker — generalized from a shop-credit ledger. Android app (Flutter, offline-first SQLite) + sync API/website (Go). Rebranded 2026-10-27 to **দেনা পাওনা** (briefly "দেনা পাওনা দিবা" for a few minutes, then shortened — app was still local-dev only, not Play Store published, at rebrand time — confirmed with user before renaming applicationId). Backend/API brand and landing page text not yet updated — still says "Baki Khata" / "বাকির খাতা · Powered By: Sofol IT".
+Bangla personal দেনা-পাওনা (debt/credit) tracker — generalized from a shop-credit ledger. Android app (Flutter, offline-first SQLite) + sync API/website (Go). Rebranded 2026-10-27 to **দেনা পাওনা** (briefly "দেনা পাওনা দিবা" for a few minutes, then shortened — app was still local-dev only, not Play Store published, at rebrand time — confirmed with user before renaming applicationId). **Renamed again 2026-11-07 to হিসাব সাথী / Hisab Sathi**: folder `hisab-sathi-app`, Dart package `hisab_sathi`, applicationId `com.sofolit.hisab_sathi`, DB file `hisab_sathi.db`, new public GitHub repo `sofolitltd/hisab-sathi-app` (history kept; old `baki-khata-app` repo left untouched with releases v1.0.2–v1.2.0). API folder renamed `hisab-sathi-api` (Go module `hisab-sathi-api`) and landing text updated, but its GitHub repo, Vercel project and the `bakikhatabd.vercel.app` domain keep the old names on purpose (installed apps sync through that domain). **Released v1.2.0 APKs use `com.sofolit.baki_khata`** (~16 downloads): they cannot update to the new id — those users must install the new app and log in to sync data back.
 
 ## Session 2026-11-07 — direction fixes, pabo/debo split everywhere, statement print
 
@@ -75,7 +75,7 @@ Picks up right after the rebrand/DB-backup work above. Everything below is done,
    - **DB v7→v8 one-time migration** (`Store._unifyBalanceDirection`): flips `type` (baki↔joma) once for every existing `ledger='debo'` customer's entries, so `sum(baki)-sum(joma)` becomes a single universal signed number (positive=receivable) forever after. Verified live on the user's real device data: pulled DB before/after, confirmed every debo customer's magnitude was byte-identical, only sign changed (e.g. customer 85 "Nr": `130000.0 baki` → `130000.0 joma`, same id/date/note). **No runtime entry-rewriting happens anymore, ever** — direction is always just read off balance.
    - ~45 call sites across the app changed from `customer.ledger` to `customer.direction` (store filters/totals, notifications due/owing, print sections, SMS-reminder gate, profile counts, display wording). `lib/core/database/`'s raw-SQL aggregates (`recentEntries`, `dayTotals`, `totalsBetween`) can't `GROUP BY` a non-DB column anymore, so they now pull candidate `customer_id`s from the in-memory `Store.all` (already has live balance) and filter SQL by `customer_id IN (...)`.
    - **Bonus bugs caught and fixed in the same pass**: ~8 places did raw arithmetic on `c.balance` assuming it was always positive (sort comparators in customers_screen/dashboard/stats, the "মোট" summary total in customers_screen that would never show for the দেনা tab, the installment plan's default total amount, the "সব শোধ" quick-fill button that would've written a negative number into the amount field). All now use `.balance.abs()` where the value isn't already going through `taka()` (which already does `.abs()` internally).
-3. **Rebrand** — app renamed "দেনা পাওনা" (briefly "দেনা পাওনা দিবা"), new two-arrow exchange-cycle logo (teal/indigo, generated with a Pillow script, not an off-the-shelf asset), Android `applicationId`/Dart package renamed to `com.sofolit.dena_pawna`/`dena_pawna` (see the note on this below — was previously flagged as don't-touch, overridden after confirming local-dev-only). Local SQLite filename (`baki_khata.db`) deliberately **not** renamed (zero data-migration risk).
+3. **Rebrand** — app renamed "দেনা পাওনা" (briefly "দেনা পাওনা দিবা"), new two-arrow exchange-cycle logo (teal/indigo, generated with a Pillow script, not an off-the-shelf asset), Android `applicationId`/Dart package renamed to `com.sofolit.hisab_sathi`/`hisab_sathi` (see the note on this below — was previously flagged as don't-touch, overridden after confirming local-dev-only). Local SQLite filename (`baki_khata.db`) deliberately **not** renamed (zero data-migration risk).
 4. **Vocabulary generalization (phase 1 of 2)** — `lib/core/ledger.dart`'s `LedgerText` is the single source for all user-facing wording; `party`/`partyPlural`/`partyHint` changed from "কাস্টমার"/"পাওনাদার"/"মহাজন/সাপ্লায়ার" to neutral "ব্যক্তি"/"নাম লিখুন" everywhere at once. **Did not** yet unify the verbs to the universal "দিলাম"/"পেলাম" (see below) — that's phase 2, deliberately deferred because at the time the entry-type semantics still depended on which "book" a customer was in; now that §2 above is done, phase 2 is actually safe to do. Also: removed "দোকানের নাম"/"ঠিকানা" entirely from `Account`/profile (was shop-specific, unused by sync — confirmed zero backend dependency before removing). Added Profile as a 4th bottom-nav tab (was previously only reachable by tapping the logo, which now switches to that tab instead of pushing a route).
 5. **Print redesigned** (`lib/features/printing/print_slips.dart`) — the old output was literally scissors-cut collection slips (dashed borders, 2 per page, a blank "তারিখ: ____" signature line) aimed at a shop-collector workflow. Replaced with a clean tabular statement (`#`, নাম, মোবাইল, শেষ এন্ট্রি, টাকা — black header row repeated per page, grey month-section bands, right-aligned amounts) — verified live: 75 real people now fit in 3 A4 pages instead of ~38. `PrintSection`/`printSections()` grouping logic (by month/name, sort order) is unchanged and reused.
 
@@ -96,28 +96,28 @@ Implemented the redesign analyzed at the end of part 2. `flutter analyze` clean.
 ## Layout (all under `/Users/reyad/Documents/Programming/Flutter/`)
 | Path | What | GitHub |
 |---|---|---|
-| `baki-khata-app/` | Flutter app | `sofolitltd/baki-khata-app` (PUBLIC) |
-| `baki-khata-api/` | Go + Gin + Neon Postgres API, landing page at `/` | `sofolitltd/baki-khata-api` (private) |
+| `hisab-sathi-app/` | Flutter app | `sofolitltd/hisab-sathi-app` (PUBLIC; old `sofolitltd/baki-khata-app` holds releases ≤ v1.2.0) |
+| `hisab-sathi-api/` | Go + Gin + Neon Postgres API, landing page at `/` | `sofolitltd/baki-khata-api` (private, not renamed) |
 
-~~Dart package name `baki_khata` and Android `applicationId` `com.sofolit.baki_khata` are deliberately NOT renamed (would break updates / hyphens illegal).~~ **Update 2026-10-27**: renamed anyway — Dart package `dena_pawna`, Android `applicationId`/`namespace` `com.sofolit.dena_pawna`. Safe only because the app was confirmed still local-dev-only (not on Play Store, no installed-user base to break). If this app is ever side-loaded to real users before a Play Store release, re-verify that's still true before renaming applicationId again — it breaks the update path for anyone already on the old id. The local SQLite filename (`baki_khata.db`) was deliberately left unchanged to avoid any risk of orphaning existing on-device data.
+~~Dart package name `baki_khata` and Android `applicationId` `com.sofolit.baki_khata` are deliberately NOT renamed (would break updates / hyphens illegal).~~ **Update 2026-10-27**: renamed anyway — Dart package `dena_pawna`, Android `applicationId`/`namespace` `com.sofolit.dena_pawna` (never released; superseded 2026-11-07 by `hisab_sathi`, see above). Safe only because the app was confirmed still local-dev-only (not on Play Store, no installed-user base to break). If this app is ever side-loaded to real users before a Play Store release, re-verify that's still true before renaming applicationId again — it breaks the update path for anyone already on the old id. The SQLite file was `baki_khata.db` until 2026-11-07; it is now `hisab_sathi.db` (safe because the new applicationId is a fresh install anyway).
 
 ## Live
 - Site + API: https://bakikhatabd.vercel.app (primary). `baki-khata-api-silk.vercel.app` also works (redirect removed on purpose: Dart does not follow 307 on POST, v1.0.1 apps use it).
 - `bakikhata.vercel.app` is taken by someone else's "Coming Soon" project; couldn't be claimed.
 - Vercel: scope/team `sofolit` (SofolIT), project `baki-khata-api`, container deploy (`Dockerfile.vercel`), region `sin1`, GitHub-connected: **push to `main` auto-deploys**. CLI login must be the Sofolit account (`vercel login`, device flow); `gadget-doptor` team has an OLD `baki-khata-api` project that still needs deleting (not reachable with the current login).
 - Neon DB branch `production` (ap-southeast-1). Env on Vercel: `DATABASE_URL`, `JWT_SECRET` (production only).
-- Latest release: v1.2.0 (https://github.com/sofolitltd/baki-khata-app/releases). API is tagged with the same version (`baki-khata-api`, Linux binary attached; the user only wants Linux for Go and Android for Flutter). Site's Download button -> `/download` -> 302 to `releases/latest/download/baki-khata.apk`.
+- Latest release: v1.2.0 (https://github.com/sofolitltd/baki-khata-app/releases, old repo). Next releases go to https://github.com/sofolitltd/hisab-sathi-app/releases. API is tagged with the same version (`baki-khata-api`, Linux binary attached; the user only wants Linux for Go and Android for Flutter). Site's Download button -> `/download` -> 302 to `hisab-sathi-app/releases/latest/download/hisab-sathi.apk` (landing changed locally 2026-11-07: **do not deploy the API until the first hisab-sathi-app release exists**, or the download link 404s).
 
 ## Run locally
-- `baki-khata-app`: `make run-e` (emulator-5554, API at 10.0.2.2:8080), `make run-d [DEVICE=id]` (real phone via LAN IP), `make run` (starts API), `make devices`.
-- `baki-khata-api`: `make run` (kills old process on :8080 first), `make landing` / `npm run landing` rebuilds `landing/app.css` (Tailwind v4 CLI) — **commit the built `app.css`**.
+- `hisab-sathi-app`: `make run-e` (emulator-5554, API at 10.0.2.2:8080), `make run-d [DEVICE=id]` (real phone via LAN IP), `make run` (starts API), `make devices`.
+- `hisab-sathi-api`: `make run` (kills old process on :8080 first), `make landing` / `npm run landing` rebuilds `landing/app.css` (Tailwind v4 CLI) — **commit the built `app.css`**.
 - Debug builds use localhost/10.0.2.2; **release builds default to `bakikhatabd.vercel.app`** (`lib/core/config.dart`), override with `--dart-define=API_URL=`.
 
 ## Release procedure (app)
 1. Bump `version:` in `pubspec.yaml` (currently 1.2.0+7).
 2. `flutter build apk --release --split-per-abi` (~3 min; run in background).
 3. Verify signature: `apksigner verify --print-certs` -> `CN=Baki Khata, O=Sofolit`.
-4. Copy to `baki-khata-vX.Y.Z-{arm64-v8a,armeabi-v7a,x86_64}.apk`, **plus `baki-khata.apk` (= arm64) — required, the website download link depends on this exact name**, plus `SHA256SUMS.txt`.
+4. Copy to `hisab-sathi-vX.Y.Z-{arm64-v8a,armeabi-v7a,x86_64}.apk`, **plus `hisab-sathi.apk` (= arm64) — required, the website download link depends on this exact name**, plus `SHA256SUMS.txt`.
 5. `git tag -a vX.Y.Z`, push `main` + tag, `gh release create vX.Y.Z ... --latest` (release notes in Bangla, user-facing).
 
 ## Release procedure (API)
@@ -130,13 +130,13 @@ Signing: `android/key.properties` (gitignored) -> `~/.baki_khata/upload-keystore
 ## Code layout (feature-first, refactored 2026-11-07)
 Hard rule from the user: **no file over 300 lines**, in either repo. Split by feature, not by type.
 
-App (`lib/`, package `dena_pawna`, imports are `package:dena_pawna/...`):
+App (`lib/`, package `hisab_sathi`, imports are `package:hisab_sathi/...`):
 - `main.dart` boots the services; `app.dart` is the `MaterialApp`.
 - `core/` holds what every feature shares: `database/` (`Store`, one library split into `part` files by domain: customers, entries, logs, schedule, stats, sync, plus `schema.dart` migrations), `models/` (one file per entity, `models.dart` re-exports them), `notifications/` (`Notifier` + `DailyNotifier` part), `voice/` (`voice.dart` re-exports numbers, phonetic and `MicButton`), `photo/`, `theme/`, `utils/`, `widgets/` (`NameAvatar`, `PinField`, `PhoneField`, `confirmDelete`), `ledger.dart`, `l10n.dart`, `config.dart`. `core/` never imports from `features/`.
 - `features/<name>/` holds screens, sheets and a `widgets/` folder: `auth`, `sync`, `home` (shell + top bar), `dashboard`, `customers` (list, filters, card, picker, people list, audio player), `customer_detail` (screen, form, edit-entry and reminder sheets, `openCustomer`), `entries` (entry sheet, due reminder), `installment`, `contact_log`, `stats`, `profile`, `printing`, `statement`. `contact_log.dart` and `installment.dart` are barrels exposing each feature's public API.
 - Big private classes were split with `part` files (Store, print painter, statement image) so behaviour didn't change.
 
-API (`baki-khata-api`): `main.go` wires everything; `internal/database`, `internal/auth`, `internal/datasync` (`/sync/*`), `internal/landing` (+ `web/` assets).
+API (`hisab-sathi-api`): `main.go` wires everything; `internal/database`, `internal/auth`, `internal/datasync` (`/sync/*`), `internal/landing` (+ `web/` assets).
 
 ## Architecture notes
 - Notifications are 100% local (`flutter_local_notifications`, scheduled from SQLite data). No FCM/server push. Per-customer reminders (default 10:00, time pickable everywhere via `lib/features/entries/due_reminder.dart`), morning summary (default 10:00, every day) and end-of-day recap (default 22:00; a time before 05:00 reports the previous day). Times live in SharedPreferences, editable in Profile. Text is fixed at schedule time, so `Store.scheduleDaily()` rebuilds both daily notifications on every data change.
@@ -166,7 +166,7 @@ API (`baki-khata-api`): `main.go` wires everything; `internal/database`, `intern
 The user dropped this approach entirely. No v2 code is left in this repo or in the API (checked: no `lib/v2/`, `v2_*` screens, `V2Store`, `baki_khata_v2.db` or `mobile_scanner`). The "v2" mentioned in `lib/core/database/schema.dart` is the old SQLite schema version, which is unrelated.
 
 ## Gotchas hit this session
-- `vercel link` appended a `VERCEL_OIDC_TOKEN` to `baki-khata-api/.env.local` (gitignored; DB vars intact).
+- `vercel link` appended a `VERCEL_OIDC_TOKEN` to `hisab-sathi-api/.env.local` (gitignored; DB vars intact).
 - The emulator (`emulator-5554`) holds the user's real test data incl. a profile with a real-looking name/shop/address — don't screenshot the profile screen. The demo-data trick used for landing screenshots: pull `databases/baki_khata.db` via `adb run-as`, edit with python sqlite3 (`dirty=0`), push back, restore the backup afterwards. `adb` is not on PATH: `$ANDROID_SDK/platform-tools/adb` (sdk.dir in `android/local.properties`).
 - Mic permission on the emulator was revoked after testing.
 - There is no `test/` dir. Logic and rendering were checked with throwaway `flutter test` files (deleted afterwards): pure functions (installment math, transliteration), and image output by rendering with the bundled font loaded via `FontLoader` and writing PNGs to the scratchpad. Reuse that trick to eyeball print/statement layouts.
@@ -188,7 +188,7 @@ The user dropped this approach entirely. No v2 code is left in this repo or in t
 - Never installed the release APKs on a real phone. Untested on device: Bangla STT/TTS quality and the transliterated names, the exact-alarm permission flow (Android 14 opens a settings page), notification timing, printing via the system print dialog, sharing to WhatsApp, photo crop orientation on portrait camera photos, installments end-to-end (set a plan, add a joma, next date should move).
 - Landing page checked at desktop width only (headless Chrome can't do narrow widths).
 - Old `gadget-doptor` Vercel project still exists (see above). Old releases v1.0.0 (points to dead-to-be old URL) and v1.0.1 still listed.
-- `baki-khata-api` repo is private (fine). Local `.iml` files still carry old names (IDE-generated).
+- API GitHub repo `baki-khata-api` is private (fine). Local `.iml` files still carry old names (IDE-generated).
 - Proposed to the user, not started (waiting for their pick): old-customer handling — "last transaction" age filter (3/6/12/24 months), year chips, "oldest first" sort, archive for paid + inactive customers, marking very old baki as doubtful so totals show it separately. Also discussed: per-customer credit limit warning.
 - Ideas not started: voice settings toggle, FCM push, rate limiting beyond per-account lockout, battery-optimization shortcut for OEMs that kill alarms.
 

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/photo/photo.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/widgets/phone_field.dart';
-import 'package:dena_pawna/features/customer_detail/widgets/customer_name_field.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/widgets/phone_field.dart';
+import 'package:hisab_sathi/features/customer_detail/widgets/customer_name_field.dart';
 
 /// নতুন কাস্টমার যোগ বা এডিট। নতুন হলে id ফেরত দেয়।
 Future<int?> showCustomerForm(BuildContext context, {Customer? customer}) =>

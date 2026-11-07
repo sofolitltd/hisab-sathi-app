@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/features/customer_detail/customer_form.dart';
-import 'package:dena_pawna/features/customer_detail/customer_navigation.dart';
-import 'package:dena_pawna/features/customers/audio_list_sheet.dart';
-import 'package:dena_pawna/features/customers/customer_filters.dart';
-import 'package:dena_pawna/features/customers/widgets/customer_card.dart';
-import 'package:dena_pawna/features/customers/widgets/empty_state.dart';
-import 'package:dena_pawna/features/customers/widgets/pabo_debo_total.dart';
-import 'package:dena_pawna/features/printing/print_sheet.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_form.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_navigation.dart';
+import 'package:hisab_sathi/features/customers/audio_list_sheet.dart';
+import 'package:hisab_sathi/features/customers/customer_filters.dart';
+import 'package:hisab_sathi/features/customers/widgets/customer_card.dart';
+import 'package:hisab_sathi/features/customers/widgets/empty_state.dart';
+import 'package:hisab_sathi/features/customers/widgets/pabo_debo_total.dart';
+import 'package:hisab_sathi/features/printing/print_sheet.dart';
 
 /// সব কাস্টমারের তালিকা — খোঁজা ও ফিল্টার।
 class CustomersScreen extends StatefulWidget {

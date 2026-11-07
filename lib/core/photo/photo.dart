@@ -9,7 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import 'package:dena_pawna/core/photo/crop_screen.dart';
+import 'package:hisab_sathi/core/photo/crop_screen.dart';
 
 /// সর্বোচ্চ ছবির সাইজ (বাইট) — ১০০ KB।
 const maxPhotoBytes = 100 * 1024;

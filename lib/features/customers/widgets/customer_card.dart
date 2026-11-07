@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/widgets/name_avatar.dart';
-import 'package:dena_pawna/features/customer_detail/customer_navigation.dart';
-import 'package:dena_pawna/features/installment/installment.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/widgets/name_avatar.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_navigation.dart';
+import 'package:hisab_sathi/features/installment/installment.dart';
 
 /// কাস্টমারের কার্ড — তালিকা ও হোমের খোঁজে একই রকম।
 class CustomerCard extends StatelessWidget {

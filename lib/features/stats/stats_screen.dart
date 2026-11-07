@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/customer_detail/customer_screen.dart';
-import 'package:dena_pawna/features/stats/stats_period.dart';
-import 'package:dena_pawna/features/stats/widgets/aging_card.dart';
-import 'package:dena_pawna/features/stats/widgets/metric_card.dart';
-import 'package:dena_pawna/features/stats/widgets/monthly_chart.dart';
-import 'package:dena_pawna/features/stats/widgets/range_nav.dart';
-import 'package:dena_pawna/features/stats/widgets/recovery_card.dart';
-import 'package:dena_pawna/features/stats/widgets/stats_section.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_screen.dart';
+import 'package:hisab_sathi/features/stats/stats_period.dart';
+import 'package:hisab_sathi/features/stats/widgets/aging_card.dart';
+import 'package:hisab_sathi/features/stats/widgets/metric_card.dart';
+import 'package:hisab_sathi/features/stats/widgets/monthly_chart.dart';
+import 'package:hisab_sathi/features/stats/widgets/range_nav.dart';
+import 'package:hisab_sathi/features/stats/widgets/recovery_card.dart';
+import 'package:hisab_sathi/features/stats/widgets/stats_section.dart';
 
 /// আদায়ের হিসাব ও পরিসংখ্যান।
 class StatsScreen extends StatefulWidget {

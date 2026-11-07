@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/customer_detail/customer_navigation.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_navigation.dart';
 
 class RecentTile extends StatelessWidget {
   const RecentTile({super.key, required this.entry, required this.name});

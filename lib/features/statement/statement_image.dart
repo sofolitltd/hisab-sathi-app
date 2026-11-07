@@ -3,12 +3,12 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
-import 'package:dena_pawna/features/installment/installment.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/installment/installment.dart';
 
 part 'statement_parts.dart';
 

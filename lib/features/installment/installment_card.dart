@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/installment/plan_labels.dart';
-import 'package:dena_pawna/features/installment/plan_sheet.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/installment/plan_labels.dart';
+import 'package:hisab_sathi/features/installment/plan_sheet.dart';
 
 /// কাস্টমার পাতায় কিস্তির অবস্থা — না থাকলে শুরু করার বাটন।
 class InstallmentCard extends StatelessWidget {

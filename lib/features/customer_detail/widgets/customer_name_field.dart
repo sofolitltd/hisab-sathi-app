@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/core/widgets/name_avatar.dart';
-import 'package:dena_pawna/features/customers/customer_picker.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/core/widgets/name_avatar.dart';
+import 'package:hisab_sathi/features/customers/customer_picker.dart';
 
 /// নতুন বাকির শিটের মতো: মাইক, তালিকা থেকে বাছাই, আর লিখতে লিখতে আগের
 /// একই রকম নাম দেখায় — যাতে একই মানুষ দুবার না বানানো হয়।

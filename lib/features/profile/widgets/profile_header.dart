@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
-import 'package:dena_pawna/features/profile/widgets/profile_avatar.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/profile/widgets/profile_avatar.dart';
 
 /// প্রোফাইলের উপরের অংশ — লগইন না থাকলে অতিথির ছবি ও লেখা।
 class ProfileHeader extends StatelessWidget {

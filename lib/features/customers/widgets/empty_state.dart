@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
+import 'package:hisab_sathi/core/ledger.dart';
 
 class CustomersEmptyState extends StatelessWidget {
   const CustomersEmptyState({

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
 
 /// পাওনা আর দেনা আলাদা রঙের ছোট বোতাম; শূন্যটা বাদ যায়। চাপলে শুধু সেই
 /// দিক বাছাই হয়, আবার চাপলে সবাই। জায়গা কম হলে নিচের লাইনে নামে।

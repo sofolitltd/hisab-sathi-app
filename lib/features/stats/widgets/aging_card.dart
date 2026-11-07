@@ -2,12 +2,12 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/customers/people_list_page.dart';
-import 'package:dena_pawna/features/stats/widgets/stats_section.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/customers/people_list_page.dart';
+import 'package:hisab_sathi/features/stats/widgets/stats_section.dart';
 
 /// পাওনা টাকা কোন অবস্থায় আছে — মেয়াদ পার, আজ, সামনে, তারিখ নেই।
 class AgingCard extends StatelessWidget {

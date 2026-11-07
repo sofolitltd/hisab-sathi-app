@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import 'package:dena_pawna/core/config.dart';
-import 'package:dena_pawna/core/photo/photo.dart';
+import 'package:hisab_sathi/core/config.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
 
 /// সার্ভারের ফেরত দেওয়া ত্রুটি (বাংলা বার্তাসহ)।
 class ApiError implements Exception {

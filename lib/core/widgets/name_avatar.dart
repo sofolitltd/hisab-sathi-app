@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/photo/photo.dart';
-import 'package:dena_pawna/core/photo/photo_viewer.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
+import 'package:hisab_sathi/core/photo/photo_viewer.dart';
 
 /// কাস্টমারের নামের প্রথম অক্ষর দিয়ে গোল অ্যাভাটার — নাম অনুযায়ী রঙ বদলায়।
 class NameAvatar extends StatelessWidget {

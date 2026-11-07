@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/features/customer_detail/widgets/entry_tile.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/features/customer_detail/widgets/entry_tile.dart';
 
 /// একজনের লেনদেনের তালিকা — লোড হচ্ছে, ফাঁকা, বা কার্ডে সাজানো এন্ট্রি।
 class EntryList extends StatelessWidget {

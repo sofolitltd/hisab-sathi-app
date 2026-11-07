@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/features/auth/auth_screen.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
-import 'package:dena_pawna/features/profile/change_pin_sheet.dart';
-import 'package:dena_pawna/features/profile/edit_profile_sheet.dart';
-import 'package:dena_pawna/features/profile/widgets/ledger_summary_card.dart';
-import 'package:dena_pawna/features/profile/widgets/notification_settings.dart';
-import 'package:dena_pawna/features/profile/widgets/profile_header.dart';
-import 'package:dena_pawna/features/profile/widgets/settings_section.dart';
-import 'package:dena_pawna/features/sync/sync_service.dart';
-import 'package:dena_pawna/features/sync/sync_sheet.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/features/auth/auth_screen.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/profile/change_pin_sheet.dart';
+import 'package:hisab_sathi/features/profile/edit_profile_sheet.dart';
+import 'package:hisab_sathi/features/profile/widgets/ledger_summary_card.dart';
+import 'package:hisab_sathi/features/profile/widgets/notification_settings.dart';
+import 'package:hisab_sathi/features/profile/widgets/profile_header.dart';
+import 'package:hisab_sathi/features/profile/widgets/settings_section.dart';
+import 'package:hisab_sathi/features/sync/sync_service.dart';
+import 'package:hisab_sathi/features/sync/sync_sheet.dart';
 
 /// প্রোফাইল: নিজের তথ্য, দোকানের তথ্য, খাতার সারসংক্ষেপ, সিঙ্ক, PIN বদল ও লগআউট।
 class ProfileScreen extends StatelessWidget {

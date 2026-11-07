@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/widgets/pin_field.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/widgets/pin_field.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
 
 class ChangePinSheet extends StatefulWidget {
   const ChangePinSheet({super.key});

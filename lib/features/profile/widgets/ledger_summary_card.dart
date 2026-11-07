@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/customers/people_list_page.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/customers/people_list_page.dart';
 
 /// মোট পাওনা ও দেনা — চাপলে সেই দিকের তালিকা।
 class LedgerSummaryCard extends StatelessWidget {

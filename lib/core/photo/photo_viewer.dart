@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/photo/photo.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
 
 /// ছবি বড় করে ডায়লগে; যেকোনো জায়গায় চাপলে বন্ধ।
 Future<void> showPhoto(BuildContext context, Customer c) => showDialog<void>(

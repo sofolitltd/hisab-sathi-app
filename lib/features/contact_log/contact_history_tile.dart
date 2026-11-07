@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/contact_log/contact_actions.dart';
-import 'package:dena_pawna/features/contact_log/contact_history_page.dart';
-import 'package:dena_pawna/features/contact_log/logs_loader.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/contact_log/contact_actions.dart';
+import 'package:hisab_sathi/features/contact_log/contact_history_page.dart';
+import 'package:hisab_sathi/features/contact_log/logs_loader.dart';
 
 /// কাস্টমার পাতায় এক লাইন — শেষ যোগাযোগ আর কতগুলো; চাপলে পুরো ইতিহাসের পাতা।
 /// লেনদেনের তালিকা যেন নিচে চাপা না পড়ে, তাই এখানে পুরো তালিকা দেখানো হয় না।

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/features/customers/customer_filters.dart';
-import 'package:dena_pawna/features/customers/widgets/pabo_debo_total.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/features/customers/customer_filters.dart';
+import 'package:hisab_sathi/features/customers/widgets/pabo_debo_total.dart';
 
 class SectionTitle extends StatelessWidget {
   const SectionTitle({

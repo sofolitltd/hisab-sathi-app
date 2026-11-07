@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/features/contact_log/contact_actions.dart';
-import 'package:dena_pawna/features/contact_log/log_sheet.dart';
-import 'package:dena_pawna/features/contact_log/logs_loader.dart';
-import 'package:dena_pawna/features/contact_log/widgets/log_widgets.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/features/contact_log/contact_actions.dart';
+import 'package:hisab_sathi/features/contact_log/log_sheet.dart';
+import 'package:hisab_sathi/features/contact_log/logs_loader.dart';
+import 'package:hisab_sathi/features/contact_log/widgets/log_widgets.dart';
 
 /// একজন কাস্টমারের সব কল, মেসেজ, তাগাদা — নতুনটা উপরে।
 class ContactHistoryPage extends StatefulWidget {

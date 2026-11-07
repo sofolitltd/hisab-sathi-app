@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/customers/audio_list_sheet.dart';
-import 'package:dena_pawna/features/customers/widgets/customer_card.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/customers/audio_list_sheet.dart';
+import 'package:hisab_sathi/features/customers/widgets/customer_card.dart';
 
 /// পাওনা বা দেনার একটা অংশে কারা আছে (সবাই, মেয়াদ পার, আজ, …) — হোম,
 /// রিপোর্ট আর প্রোফাইল সব জায়গা থেকে এই একই পাতা খোলে।

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/l10n.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/features/home/shell.dart';
-import 'package:dena_pawna/features/sync/sync_service.dart';
+import 'package:hisab_sathi/core/l10n.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/features/home/shell.dart';
+import 'package:hisab_sathi/features/sync/sync_service.dart';
 
 /// অ্যাপের মূল উইজেট — থিম, ভাষা, আর ফিরে এলে সিঙ্ক।
-class BakiKhataApp extends StatefulWidget {
-  const BakiKhataApp({super.key});
+class HisabSathiApp extends StatefulWidget {
+  const HisabSathiApp({super.key});
 
   @override
-  State<BakiKhataApp> createState() => _BakiKhataAppState();
+  State<HisabSathiApp> createState() => _HisabSathiAppState();
 }
 
-class _BakiKhataAppState extends State<BakiKhataApp>
+class _HisabSathiAppState extends State<HisabSathiApp>
     with WidgetsBindingObserver {
   @override
   void initState() {

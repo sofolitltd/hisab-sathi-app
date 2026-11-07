@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/core/widgets/name_avatar.dart';
-import 'package:dena_pawna/features/customers/customer_filters.dart';
-import 'package:dena_pawna/features/customers/widgets/customer_card.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/core/widgets/name_avatar.dart';
+import 'package:hisab_sathi/features/customers/customer_filters.dart';
+import 'package:hisab_sathi/features/customers/widgets/customer_card.dart';
 
 /// তালিকার একজন একজন করে নাম আর বাকির টাকা পড়ে শোনায় — প্লে, পজ,
 /// আগের-পরের আর যেকোনো নামে চাপ দিয়ে সেখান থেকে শোনা।

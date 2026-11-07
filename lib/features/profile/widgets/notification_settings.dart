@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/notifications/notifier.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/entries/due_reminder.dart';
-import 'package:dena_pawna/features/profile/widgets/settings_section.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/notifications/notifier.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/entries/due_reminder.dart';
+import 'package:hisab_sathi/features/profile/widgets/settings_section.dart';
 
 /// রিমাইন্ডার ও রোজকার নোটিফিকেশনের সেটিংস।
 class NotificationSettings extends StatelessWidget {

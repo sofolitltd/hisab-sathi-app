@@ -6,11 +6,11 @@ import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/notifications/notifier.dart';
-import 'package:dena_pawna/core/photo/photo.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/notifications/notifier.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
 
 part 'schema.dart';
 part 'store_customers.dart';
@@ -64,8 +64,8 @@ class Store extends ChangeNotifier {
     if (kIsWeb) databaseFactory = databaseFactoryFfiWeb;
     _db = await openDatabase(
       kIsWeb
-          ? 'baki_khata.db'
-          : p.join(await getDatabasesPath(), 'baki_khata.db'),
+          ? 'hisab_sathi.db'
+          : p.join(await getDatabasesPath(), 'hisab_sathi.db'),
       version: 8,
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onUpgrade: (db, oldVersion, _) async {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:dena_pawna/core/photo/photo.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
-import 'package:dena_pawna/features/profile/widgets/profile_avatar.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/profile/widgets/profile_avatar.dart';
 
 class EditProfileSheet extends StatefulWidget {
   const EditProfileSheet(this.acc, {super.key});

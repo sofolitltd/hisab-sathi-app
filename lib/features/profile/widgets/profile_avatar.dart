@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/photo/photo.dart';
-import 'package:dena_pawna/features/auth/auth_service.dart';
+import 'package:hisab_sathi/core/photo/photo.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
 
 /// ছবি থাকলে ছবি, নইলে নামের প্রথম অক্ষর।
 class ProfileAvatar extends StatelessWidget {

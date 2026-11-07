@@ -1,6 +1,6 @@
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/installment_plan.dart';
-import 'package:dena_pawna/core/models/model_utils.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/installment_plan.dart';
+import 'package:hisab_sathi/core/models/model_utils.dart';
 
 class Customer {
   final int id;

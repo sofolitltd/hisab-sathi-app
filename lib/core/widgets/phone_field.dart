@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/utils/utils.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
 
 /// মোবাইল নম্বরের ঘর — পাশে ফোনের কন্টাক্ট থেকে নেওয়ার বোতাম।
 class PhoneField extends StatelessWidget {

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/notifications/notifier.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/widgets/phone_field.dart';
-import 'package:dena_pawna/features/entries/due_reminder.dart';
-import 'package:dena_pawna/features/entries/widgets/amount_field.dart';
-import 'package:dena_pawna/features/entries/widgets/entry_name_field.dart';
-import 'package:dena_pawna/features/entries/widgets/entry_sheet_header.dart';
-import 'package:dena_pawna/features/entries/widgets/note_field.dart';
-import 'package:dena_pawna/features/entries/widgets/picked_customer_chip.dart';
-import 'package:dena_pawna/features/entries/widgets/plan_hint.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/notifications/notifier.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/widgets/phone_field.dart';
+import 'package:hisab_sathi/features/entries/due_reminder.dart';
+import 'package:hisab_sathi/features/entries/widgets/amount_field.dart';
+import 'package:hisab_sathi/features/entries/widgets/entry_name_field.dart';
+import 'package:hisab_sathi/features/entries/widgets/entry_sheet_header.dart';
+import 'package:hisab_sathi/features/entries/widgets/note_field.dart';
+import 'package:hisab_sathi/features/entries/widgets/picked_customer_chip.dart';
+import 'package:hisab_sathi/features/entries/widgets/plan_hint.dart';
 
 /// বাকি / জমা লেখার শিট।
 /// [customer] না দিলে নতুন (বা আগের) কাস্টমারের নাম লিখে সরাসরি বাকি লেখা যায় —

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/voice/voice.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
 
 /// নোটের ঘর — মাইকে বললে আগের লেখার পরে যোগ হয়।
 class NoteField extends StatelessWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/features/contact_log/contact_actions.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/features/contact_log/contact_actions.dart';
 
 /// পাশাপাশি তিনটা বাটনে কম প্যাডিং, যাতে লেখা জায়গা পায়।
 final compactButtonStyle = ButtonStyle(

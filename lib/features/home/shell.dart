@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/notifications/notifier.dart';
-import 'package:dena_pawna/core/theme/theme.dart';
-import 'package:dena_pawna/features/customer_detail/customer_form.dart';
-import 'package:dena_pawna/features/customer_detail/customer_navigation.dart';
-import 'package:dena_pawna/features/customers/customers_screen.dart';
-import 'package:dena_pawna/features/dashboard/dashboard_screen.dart';
-import 'package:dena_pawna/features/entries/entry_sheet.dart';
-import 'package:dena_pawna/features/home/widgets/top_bar.dart';
-import 'package:dena_pawna/features/profile/profile_screen.dart';
-import 'package:dena_pawna/features/stats/stats_screen.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/notifications/notifier.dart';
+import 'package:hisab_sathi/core/theme/theme.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_form.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_navigation.dart';
+import 'package:hisab_sathi/features/customers/customers_screen.dart';
+import 'package:hisab_sathi/features/dashboard/dashboard_screen.dart';
+import 'package:hisab_sathi/features/entries/entry_sheet.dart';
+import 'package:hisab_sathi/features/home/widgets/top_bar.dart';
+import 'package:hisab_sathi/features/profile/profile_screen.dart';
+import 'package:hisab_sathi/features/stats/stats_screen.dart';
 
 /// উপরে খাতা-সুইচ, নিচে নেভিগেশন বার, আর সব ট্যাবে নতুন এন্ট্রির বাটন।
 class Shell extends StatefulWidget {

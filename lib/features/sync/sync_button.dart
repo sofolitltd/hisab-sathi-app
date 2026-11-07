@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/features/sync/sync_service.dart';
-import 'package:dena_pawna/features/sync/sync_sheet.dart';
+import 'package:hisab_sathi/features/sync/sync_service.dart';
+import 'package:hisab_sathi/features/sync/sync_sheet.dart';
 
 /// সিঙ্কের অবস্থা দেখানো ছোট ক্লাউড বাটন।
 class SyncButton extends StatelessWidget {

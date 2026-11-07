@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'package:dena_pawna/core/database/store.dart';
-import 'package:dena_pawna/core/ledger.dart';
-import 'package:dena_pawna/core/models/models.dart';
-import 'package:dena_pawna/core/utils/utils.dart';
-import 'package:dena_pawna/core/voice/voice.dart';
-import 'package:dena_pawna/core/widgets/confirm_dialog.dart';
-import 'package:dena_pawna/features/contact_log/contact_log.dart';
-import 'package:dena_pawna/features/customer_detail/customer_form.dart';
-import 'package:dena_pawna/features/customer_detail/edit_entry_sheet.dart';
-import 'package:dena_pawna/features/customer_detail/reminder_sheet.dart';
-import 'package:dena_pawna/features/customer_detail/widgets/balance_card.dart';
-import 'package:dena_pawna/features/customer_detail/widgets/entry_buttons.dart';
-import 'package:dena_pawna/features/customer_detail/widgets/entry_list.dart';
-import 'package:dena_pawna/features/customer_detail/widgets/quick_action.dart';
-import 'package:dena_pawna/features/entries/entry_sheet.dart';
-import 'package:dena_pawna/features/installment/installment.dart';
-import 'package:dena_pawna/features/statement/statement_share.dart';
+import 'package:hisab_sathi/core/database/store.dart';
+import 'package:hisab_sathi/core/ledger.dart';
+import 'package:hisab_sathi/core/models/models.dart';
+import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/voice/voice.dart';
+import 'package:hisab_sathi/core/widgets/confirm_dialog.dart';
+import 'package:hisab_sathi/features/contact_log/contact_log.dart';
+import 'package:hisab_sathi/features/customer_detail/customer_form.dart';
+import 'package:hisab_sathi/features/customer_detail/edit_entry_sheet.dart';
+import 'package:hisab_sathi/features/customer_detail/reminder_sheet.dart';
+import 'package:hisab_sathi/features/customer_detail/widgets/balance_card.dart';
+import 'package:hisab_sathi/features/customer_detail/widgets/entry_buttons.dart';
+import 'package:hisab_sathi/features/customer_detail/widgets/entry_list.dart';
+import 'package:hisab_sathi/features/customer_detail/widgets/quick_action.dart';
+import 'package:hisab_sathi/features/entries/entry_sheet.dart';
+import 'package:hisab_sathi/features/installment/installment.dart';
+import 'package:hisab_sathi/features/statement/statement_share.dart';
 
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({super.key, required this.id});
