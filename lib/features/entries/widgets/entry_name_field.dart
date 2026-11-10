@@ -15,9 +15,11 @@ class EntryNameField extends StatefulWidget {
     required this.text,
     required this.onChanged,
     required this.onSelected,
+    this.autofocus = true,
   });
   final String hint;
   final LedgerText text;
+  final bool autofocus;
 
   /// লেখা বদলালেই (বাছাই না করলেও) নতুন নাম।
   final ValueChanged<String> onChanged;
@@ -54,7 +56,7 @@ class _EntryNameFieldState extends State<EntryNameField> {
         return TextField(
           controller: controller,
           focusNode: focus,
-          autofocus: true,
+          autofocus: widget.autofocus,
           textCapitalization: TextCapitalization.words,
           decoration: InputDecoration(
             hintText: widget.hint,

@@ -20,11 +20,27 @@ extension StoreStats on Store {
       DateTime(now.year, now.month, now.day),
     ];
     final totals = {for (final d in days) d: await dayTotals(d)};
+    final trade = {for (final d in days) d: await tradeTotals(d)};
     await DailyNotifier.scheduleDailySummaries(all, days: totals);
     await DailyNotifier.scheduleRecaps(
       days: totals,
       pabo: totalOf(Ledger.pabo),
       debo: totalOf(Ledger.debo),
+    );
+    await DailyNotifier.scheduleTradeSummaries(days: trade);
+  }
+
+  /// একদিনের বিক্রয়-ক্রয়-ব্যয়ের সারাংশ (রাতের নোটিফিকেশন ও রিপোর্ট পাতার জন্য)।
+  Future<TradeTotals> tradeTotals(DateTime day) async {
+    final from = DateTime(day.year, day.month, day.day);
+    final to = DateTime(day.year, day.month, day.day, 23, 59, 59, 999);
+    final p = await profitBetween(from, to);
+    final expense = await expenseTotalBetween(from, to);
+    return TradeTotals(
+      sales: p.sales,
+      profit: p.profit,
+      purchaseCost: p.purchaseCost,
+      expense: expense,
     );
   }
 

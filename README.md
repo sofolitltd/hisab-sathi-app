@@ -2,8 +2,8 @@
 
 ব্যক্তিগত দেনা-পাওনার হিসাব রাখার অ্যান্ড্রয়েড অ্যাপ। Flutter, অফলাইন-ফার্স্ট (SQLite), চাইলে অনলাইন ব্যাকআপ ও সিঙ্ক।
 
-- সাইট ও ডাউনলোড: https://bakikhatabd.vercel.app
-- সার্ভার (API): [sofolitltd/baki-khata-api](https://github.com/sofolitltd/baki-khata-api)
+- সাইট ও ডাউনলোড: https://hisabsathibd.vercel.app
+- সার্ভার (API): [sofolitltd/hisab-sathi-api](https://github.com/sofolitltd/hisab-sathi-api)
 
 ## সুবিধা
 - পাওনা ও দেনার আলাদা খাতা, বাকি/জমার লেনদেন
@@ -16,8 +16,10 @@
 
 ## চালানো
 ```bash
-make run-e    # অ্যান্ড্রয়েড এমুলেটরে (সার্ভার: http://10.0.2.2:8080)
-make run-d    # আসল ফোনে (Mac-এর LAN IP দিয়ে সার্ভারে)
+make run-e-l  # এমুলেটরে, লোকাল সার্ভার দিয়ে (http://10.0.2.2:8080)
+make run-e-p  # এমুলেটরে, সরাসরি লাইভ API (hisabsathibd.vercel.app) দিয়ে
+make run-r-l  # আসল ফোনে, লোকাল সার্ভার দিয়ে (Mac-এর LAN IP, ঐচ্ছিক: DEVICE=<id>)
+make run-r-p  # আসল ফোনে, সরাসরি লাইভ API দিয়ে — লোকাল সার্ভার লাগে না (ঐচ্ছিক: DEVICE=<id>)
 make run      # লোকাল API সার্ভার চালু (../hisab-sathi-api দরকার)
 ```
 

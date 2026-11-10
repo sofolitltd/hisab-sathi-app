@@ -75,7 +75,7 @@ abstract final class DailyNotifier {
         scheduledDate: tz.TZDateTime.from(at, tz.local),
         title: title,
         body: body,
-        payload: 'recap',
+        payload: 'report:${day.millisecondsSinceEpoch}',
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             'night_recap',
@@ -171,7 +171,7 @@ abstract final class DailyNotifier {
         scheduledDate: tz.TZDateTime.from(at, tz.local),
         title: title,
         body: body,
-        payload: 'summary',
+        payload: 'report:${day.millisecondsSinceEpoch}',
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             'daily_summary',
@@ -188,6 +188,81 @@ abstract final class DailyNotifier {
       );
     }
   }
+
+  // ---------- বিক্রয়-ক্রয়-ব্যয়ের সারাংশ ----------
+
+  static const _tradeBaseId = 920000;
+
+  /// দিনের শেষের হিসাবের [recapTime]-এর ৫ মিনিট পরে — যাতে দুটো নোটিফিকেশন
+  /// একসাথে গুলিয়ে না যায়। আলাদা কোনো সেটিং রাখা হয়নি, রিক্যাপের সময় বদলালে
+  /// এটাও সেই অনুযায়ী বদলে যায়।
+  static Future<void> scheduleTradeSummaries({
+    required Map<DateTime, TradeTotals> days,
+  }) async {
+    if (kIsWeb) return;
+    final now = DateTime.now();
+    final t = recapTime.value;
+    final afterMidnight = t.hour < 5;
+    for (var i = 0; i < 8; i++) {
+      await Notifier.cancel(_tradeBaseId + i);
+      if (!recapOn.value) continue;
+      final day = DateTime(now.year, now.month, now.day - 1 + i);
+      final at = DateTime(
+        day.year,
+        day.month,
+        day.day + (afterMidnight ? 1 : 0),
+        t.hour,
+        t.minute + 5,
+      );
+      if (at.isBefore(now)) continue;
+
+      final trade = days[day] ?? const TradeTotals();
+      if (trade.isEmpty) continue;
+      final when = afterMidnight ? '${fmtShortDate(day)}-এর' : 'আজকের';
+      final lines = <String>[
+        'বিক্রয় ${taka(trade.sales)}',
+        if (trade.purchaseCost >= 0.01) 'ক্রয় ${taka(trade.purchaseCost)}',
+        if (trade.expense >= 0.01) 'ব্যয় ${taka(trade.expense)}',
+        'লাভ ${taka(trade.profit - trade.expense)}',
+      ];
+
+      await Notifier._plugin.zonedSchedule(
+        id: _tradeBaseId + i,
+        scheduledDate: tz.TZDateTime.from(at, tz.local),
+        title: '$when ব্যবসার সারাংশ',
+        body: lines.join(' • '),
+        payload: 'report:${day.millisecondsSinceEpoch}',
+        notificationDetails: NotificationDetails(
+          android: AndroidNotificationDetails(
+            'trade_summary',
+            'বিক্রয়-ক্রয়ের সারাংশ',
+            channelDescription: 'প্রতিদিন রাতে বিক্রয়, ক্রয় আর ব্যয়ের হিসাব',
+            importance: Importance.high,
+            priority: Priority.high,
+            styleInformation: BigTextStyleInformation(lines.join('\n')),
+          ),
+          iOS: const DarwinNotificationDetails(),
+        ),
+        androidScheduleMode: Notifier._mode,
+      );
+    }
+  }
+}
+
+/// একদিনের বিক্রয়-ক্রয়-ব্যয়ের সারাংশ।
+class TradeTotals {
+  const TradeTotals({
+    this.sales = 0,
+    this.profit = 0,
+    this.purchaseCost = 0,
+    this.expense = 0,
+  });
+  final double sales;
+  final double profit;
+  final double purchaseCost;
+  final double expense;
+
+  bool get isEmpty => sales == 0 && purchaseCost == 0 && expense == 0;
 }
 
 /// একদিনের লেনদেন — খাতা ও ধরন অনুযায়ী (মোট টাকা, কতটা এন্ট্রি)।

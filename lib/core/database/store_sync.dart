@@ -7,7 +7,11 @@ extension StoreSync on Store {
     final r = await _db.rawQuery(
       'SELECT (SELECT COUNT(*) FROM customers WHERE dirty = 1) + '
       '(SELECT COUNT(*) FROM entries WHERE dirty = 1) + '
-      '(SELECT COUNT(*) FROM contact_logs WHERE dirty = 1) AS n',
+      '(SELECT COUNT(*) FROM contact_logs WHERE dirty = 1) + '
+      '(SELECT COUNT(*) FROM products WHERE dirty = 1) + '
+      '(SELECT COUNT(*) FROM sales WHERE dirty = 1) + '
+      '(SELECT COUNT(*) FROM purchases WHERE dirty = 1) + '
+      '(SELECT COUNT(*) FROM expenses WHERE dirty = 1) AS n',
     );
     return r.first['n'] as int;
   }
@@ -18,12 +22,20 @@ extension StoreSync on Store {
       List<Map<String, Object?>> customers,
       List<Map<String, Object?>> entries,
       List<Map<String, Object?>> logs,
+      List<Map<String, Object?>> products,
+      List<Map<String, Object?>> sales,
+      List<Map<String, Object?>> purchases,
+      List<Map<String, Object?>> expenses,
     })
   >
   dirtyRows() async => (
     customers: await _db.query('customers', where: 'dirty = 1'),
     entries: await _db.query('entries', where: 'dirty = 1'),
     logs: await _db.query('contact_logs', where: 'dirty = 1'),
+    products: await _db.query('products', where: 'dirty = 1'),
+    sales: await _db.query('sales', where: 'dirty = 1'),
+    purchases: await _db.query('purchases', where: 'dirty = 1'),
+    expenses: await _db.query('expenses', where: 'dirty = 1'),
   );
 
   /// পাঠানো রেকর্ড "পরিষ্কার" চিহ্নিত করা। পাঠানোর মাঝে বদলে গেলে (updated_at ভিন্ন)
@@ -46,6 +58,10 @@ extension StoreSync on Store {
     await _db.update('customers', {'dirty': 1});
     await _db.update('entries', {'dirty': 1});
     await _db.update('contact_logs', {'dirty': 1});
+    await _db.update('products', {'dirty': 1});
+    await _db.update('sales', {'dirty': 1});
+    await _db.update('purchases', {'dirty': 1});
+    await _db.update('expenses', {'dirty': 1});
   }
 
   /// সার্ভার থেকে আসা পরিবর্তন মেশানো। লোকালে নতুন কিছু থাকলে সেটাই থাকে।
@@ -54,8 +70,20 @@ extension StoreSync on Store {
     List customers,
     List entries, [
     List logs = const [],
+    List products = const [],
+    List sales = const [],
+    List purchases = const [],
+    List expenses = const [],
   ]) async {
-    if (customers.isEmpty && entries.isEmpty && logs.isEmpty) return;
+    if (customers.isEmpty &&
+        entries.isEmpty &&
+        logs.isEmpty &&
+        products.isEmpty &&
+        sales.isEmpty &&
+        purchases.isEmpty &&
+        expenses.isEmpty) {
+      return;
+    }
     final changed = <int>{};
     final removed = <int>{};
     // ছবি ফাইলে লিখতে হয় বলে ট্রানজ্যাকশনের আগেই করে রাখা।
@@ -193,8 +221,156 @@ extension StoreSync on Store {
           );
         }
       }
+      for (final m in products.cast<Map<String, dynamic>>()) {
+        final local = (await txn.query(
+          'products',
+          columns: ['id', 'updated_at'],
+          where: 'uid = ?',
+          whereArgs: [m['uid']],
+        )).firstOrNull;
+        final values = {
+          'name': m['name'],
+          'buy_price': m['buy_price'],
+          'sell_price': m['sell_price'],
+          'unit': (m['unit'] as String?) ?? 'piece',
+          'updated_at': m['updated_at'],
+          'deleted': m['deleted'] == true ? 1 : 0,
+          'dirty': 0,
+        };
+        if (local == null) {
+          await txn.insert('products', {...values, 'uid': m['uid']});
+        } else if ((m['updated_at'] as int) >= (local['updated_at'] as int)) {
+          await txn.update(
+            'products',
+            values,
+            where: 'id = ?',
+            whereArgs: [local['id']],
+          );
+        }
+      }
+      for (final m in sales.cast<Map<String, dynamic>>()) {
+        // খালি হলে ইচ্ছাকৃতভাবেই কোনো প্রোডাক্টের সাথে link নেই (ফ্রি-টেক্সট নাম)।
+        final productUid = (m['product_uid'] as String?) ?? '';
+        final product = productUid.isEmpty
+            ? null
+            : (await txn.query(
+                'products',
+                columns: ['id'],
+                where: 'uid = ?',
+                whereArgs: [productUid],
+              )).firstOrNull;
+        // নন-এম্পটি কিন্তু এখনো লোকালে আসেনি (সিঙ্ক অর্ডার) — পরের বারে আসবে।
+        if (productUid.isNotEmpty && product == null) continue;
+        final customerUid = (m['customer_uid'] as String?) ?? '';
+        final customer = customerUid.isEmpty
+            ? null
+            : (await txn.query(
+                'customers',
+                columns: ['id'],
+                where: 'uid = ?',
+                whereArgs: [customerUid],
+              )).firstOrNull;
+        final local = (await txn.query(
+          'sales',
+          columns: ['id', 'updated_at'],
+          where: 'uid = ?',
+          whereArgs: [m['uid']],
+        )).firstOrNull;
+        final values = {
+          'product_id': product?['id'],
+          'product_uid': productUid,
+          'product_name': m['product_name'] ?? '',
+          'unit_buy_price': m['unit_buy_price'],
+          'unit_sell_price': m['unit_sell_price'],
+          'quantity': m['quantity'],
+          'customer_id': customer?['id'],
+          'customer_uid': customerUid,
+          'received_amount': m['received_amount'],
+          'discount': m['discount'] ?? 0,
+          'date': m['date'],
+          'note': m['note'] ?? '',
+          'profit': m['profit'],
+          'updated_at': m['updated_at'],
+          'deleted': m['deleted'] == true ? 1 : 0,
+          'dirty': 0,
+        };
+        if (local == null) {
+          await txn.insert('sales', {...values, 'uid': m['uid']});
+        } else if ((m['updated_at'] as int) >= (local['updated_at'] as int)) {
+          await txn.update(
+            'sales',
+            values,
+            where: 'id = ?',
+            whereArgs: [local['id']],
+          );
+        }
+      }
+      for (final m in purchases.cast<Map<String, dynamic>>()) {
+        final product = (await txn.query(
+          'products',
+          columns: ['id'],
+          where: 'uid = ?',
+          whereArgs: [m['product_uid']],
+        )).firstOrNull;
+        if (product == null) continue;
+        final local = (await txn.query(
+          'purchases',
+          columns: ['id', 'updated_at'],
+          where: 'uid = ?',
+          whereArgs: [m['uid']],
+        )).firstOrNull;
+        final values = {
+          'product_id': product['id'],
+          'product_uid': m['product_uid'],
+          'quantity': m['quantity'],
+          'unit_cost': m['unit_cost'],
+          'date': m['date'],
+          'note': m['note'] ?? '',
+          'updated_at': m['updated_at'],
+          'deleted': m['deleted'] == true ? 1 : 0,
+          'dirty': 0,
+        };
+        if (local == null) {
+          await txn.insert('purchases', {...values, 'uid': m['uid']});
+        } else if ((m['updated_at'] as int) >= (local['updated_at'] as int)) {
+          await txn.update(
+            'purchases',
+            values,
+            where: 'id = ?',
+            whereArgs: [local['id']],
+          );
+        }
+      }
+      for (final m in expenses.cast<Map<String, dynamic>>()) {
+        final local = (await txn.query(
+          'expenses',
+          columns: ['id', 'updated_at'],
+          where: 'uid = ?',
+          whereArgs: [m['uid']],
+        )).firstOrNull;
+        final values = {
+          'category': m['category'],
+          'amount': m['amount'],
+          'date': m['date'],
+          'note': m['note'] ?? '',
+          'updated_at': m['updated_at'],
+          'deleted': m['deleted'] == true ? 1 : 0,
+          'dirty': 0,
+        };
+        if (local == null) {
+          await txn.insert('expenses', {...values, 'uid': m['uid']});
+        } else if ((m['updated_at'] as int) >= (local['updated_at'] as int)) {
+          await txn.update(
+            'expenses',
+            values,
+            where: 'id = ?',
+            whereArgs: [local['id']],
+          );
+        }
+      }
     });
     if (logs.isNotEmpty) logsChanged.value++;
+    if (products.isNotEmpty || sales.isNotEmpty) await refreshProducts();
     // নতুন ছবি না আসা (বাতিল রো) ফাইল রাখা হবে; শুধু বদলে যাওয়া পুরনো ফাইল মোছা।
     for (final f in stale) {
       await deletePhoto(f);

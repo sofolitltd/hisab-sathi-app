@@ -4,6 +4,7 @@ import 'package:hisab_sathi/core/database/store.dart';
 import 'package:hisab_sathi/core/ledger.dart';
 import 'package:hisab_sathi/core/theme/theme.dart';
 import 'package:hisab_sathi/core/utils/utils.dart';
+import 'package:hisab_sathi/core/widgets/pill_tabs.dart';
 import 'package:hisab_sathi/features/customer_detail/customer_screen.dart';
 import 'package:hisab_sathi/features/stats/stats_period.dart';
 import 'package:hisab_sathi/features/stats/widgets/aging_card.dart';
@@ -154,14 +155,10 @@ class _StatsScreenState extends State<StatsScreen> {
           children: [
             // কোন খাতার হিসাব দেখবে — পেজ নেভিগেশন না, শুধু এই রিপোর্টের
             // ফিল্টার, তাই গ্লোবাল মোডের মতো অন্য কোনো ট্যাবকে প্রভাবিত করে না।
-            SegmentedButton<Ledger>(
-              showSelectedIcon: false,
-              segments: [
-                for (final l in Ledger.values)
-                  ButtonSegment(value: l, label: Text(LedgerText.of(l).name)),
-              ],
-              selected: {_ledger},
-              onSelectionChanged: (v) => _setLedger(v.first),
+            PillTabs(
+              labels: [for (final l in Ledger.values) LedgerText.of(l).name],
+              selected: Ledger.values.indexOf(_ledger),
+              onChanged: (i) => _setLedger(Ledger.values[i]),
             ),
             const SizedBox(height: 12),
             SizedBox(

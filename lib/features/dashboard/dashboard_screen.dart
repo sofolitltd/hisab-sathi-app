@@ -6,7 +6,6 @@ import 'package:hisab_sathi/core/models/models.dart';
 import 'package:hisab_sathi/core/utils/utils.dart';
 import 'package:hisab_sathi/features/customers/customer_filters.dart';
 import 'package:hisab_sathi/features/dashboard/widgets/customer_list.dart';
-import 'package:hisab_sathi/features/dashboard/widgets/customer_search.dart';
 import 'package:hisab_sathi/features/dashboard/widgets/hero_card.dart';
 import 'package:hisab_sathi/features/dashboard/widgets/info_card.dart';
 import 'package:hisab_sathi/features/dashboard/widgets/recent_tile.dart';
@@ -89,8 +88,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
                 children: [
-                  CustomerSearch(store: _store),
-                  const SizedBox(height: 12),
                   Builder(
                     builder: (context) {
                       final (overduePabo, overdueDebo) = paboDebo(

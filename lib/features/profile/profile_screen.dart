@@ -9,6 +9,10 @@ import 'package:hisab_sathi/features/profile/widgets/ledger_summary_card.dart';
 import 'package:hisab_sathi/features/profile/widgets/notification_settings.dart';
 import 'package:hisab_sathi/features/profile/widgets/profile_header.dart';
 import 'package:hisab_sathi/features/profile/widgets/settings_section.dart';
+import 'package:hisab_sathi/features/purchase_sale/product_list_screen.dart';
+import 'package:hisab_sathi/features/purchase_sale/report_screen.dart';
+import 'package:hisab_sathi/features/stats/daily_report_screen.dart';
+import 'package:hisab_sathi/features/stats/stats_screen.dart';
 import 'package:hisab_sathi/features/sync/sync_service.dart';
 import 'package:hisab_sathi/features/sync/sync_sheet.dart';
 
@@ -35,6 +39,62 @@ class ProfileScreen extends StatelessWidget {
               ProfileHeader(account: acc),
               const SizedBox(height: 16),
               const LedgerSummaryCard(),
+              const SizedBox(height: 16),
+              SettingsSection(
+                title: 'আয়-ব্যয়',
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.inventory_2_outlined),
+                    title: const Text('প্রোডাক্ট লিস্ট'),
+                    subtitle: const Text('পণ্য ও কার্ড/ক্যাশ-ইনের দাম ঠিক করুন'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ProductListScreen(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              SettingsSection(
+                title: 'রিপোর্ট',
+                children: [
+                  ListTile(
+                    leading: const Icon(Icons.today_outlined),
+                    title: const Text('দৈনিক রিপোর্ট'),
+                    subtitle: const Text('পাওনা-দেনা, বিক্রয়, ক্রয় ও ব্যয় — দিন ধরে'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => DailyReportScreen(date: DateTime.now()),
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.account_balance_wallet_outlined),
+                    title: const Text('দেওয়া-পাওনার রিপোর্ট'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StatsScreen()),
+                    ),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.insights_outlined),
+                    title: const Text('আয়-ব্যয় রিপোর্ট'),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const IncomeExpenseReportScreen(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 16),
               if (acc == null)
                 SettingsSection(

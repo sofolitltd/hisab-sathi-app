@@ -77,3 +77,51 @@ Map<String, Object?> logJson(Map<String, Object?> r) => {
   'updated_at': r['updated_at'],
   'deleted': r['deleted'] == 1,
 };
+
+Map<String, Object?> productJson(Map<String, Object?> r) => {
+  'uid': r['uid'],
+  'name': r['name'],
+  'buy_price': r['buy_price'],
+  'sell_price': r['sell_price'],
+  'unit': r['unit'],
+  'updated_at': r['updated_at'],
+  'deleted': r['deleted'] == 1,
+};
+
+Map<String, Object?> saleJson(Map<String, Object?> r) => {
+  'uid': r['uid'],
+  'product_uid': r['product_uid'],
+  'product_name': r['product_name'],
+  'unit_buy_price': r['unit_buy_price'],
+  'unit_sell_price': r['unit_sell_price'],
+  'quantity': r['quantity'],
+  'customer_uid': r['customer_uid'],
+  'received_amount': r['received_amount'],
+  'discount': r['discount'] ?? 0,
+  'date': r['date'],
+  'note': r['note'],
+  'profit': r['profit'],
+  'updated_at': r['updated_at'],
+  'deleted': r['deleted'] == 1,
+};
+
+Map<String, Object?> purchaseJson(Map<String, Object?> r) => {
+  'uid': r['uid'],
+  'product_uid': r['product_uid'],
+  'quantity': r['quantity'],
+  'unit_cost': r['unit_cost'],
+  'date': r['date'],
+  'note': r['note'],
+  'updated_at': r['updated_at'],
+  'deleted': r['deleted'] == 1,
+};
+
+Map<String, Object?> expenseJson(Map<String, Object?> r) => {
+  'uid': r['uid'],
+  'category': r['category'],
+  'amount': r['amount'],
+  'date': r['date'],
+  'note': r['note'],
+  'updated_at': r['updated_at'],
+  'deleted': r['deleted'] == 1,
+};

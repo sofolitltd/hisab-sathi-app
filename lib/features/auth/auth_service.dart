@@ -161,6 +161,29 @@ class AuthService extends ChangeNotifier {
     await _save();
   }
 
+  /// সিঙ্ক শিট/বাটন থেকে সরাসরি সার্ভারে সংযোগ হলে (এই স্ক্রিনের [login]/
+  /// [register] না ডেকে) — নইলে ব্যাকআপ আসলে চালু থাকলেও প্রোফাইলে "লগইন করা
+  /// নেই" দেখায়, কারণ এই সার্ভিসের [_current]/[_users] আলাদাভাবে বসেনি।
+  /// [SyncService]-ই একমাত্র ডাকে, তাই নেটওয়ার্কে আবার যাচাই করে না।
+  Future<void> syncLoggedIn(String phone, String pin) async {
+    final ph = normalizePhone(phone) ?? phone;
+    final p = cleanPin(pin);
+    if (p == null) return;
+    final u = _users[ph];
+    if (u != null && _current == ph && _hash(u['salt'] as String, p) == u['hash']) {
+      return;
+    }
+    final salt = _newSalt();
+    _users[ph] = {
+      ...?u,
+      'name': (u?['name'] as String?) ?? 'আমার খাতা',
+      'salt': salt,
+      'hash': _hash(salt, p),
+    };
+    _current = ph;
+    await _save();
+  }
+
   Future<String?> updateProfile({required String name, String? photo}) async {
     final u = _users[_current];
     if (u == null) return 'লগইন করা নেই';

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:hisab_sathi/features/auth/auth_screen.dart';
+import 'package:hisab_sathi/features/auth/auth_service.dart';
 import 'package:hisab_sathi/features/sync/sync_service.dart';
 import 'package:hisab_sathi/features/sync/sync_sheet.dart';
 
@@ -32,7 +34,15 @@ class SyncButton extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(size * .25),
             onTap: () {
-              // ট্যাপ করলেই সিঙ্ক শুরু; শিটে অবস্থা দেখা যায়।
+              // লগইন করা না থাকলে সরাসরি লগইন পেজে — ফোন/PIN আর এখানে
+              // আলাদা করে চাওয়া হয় না। লগইন করা থাকলে সিঙ্ক শুরু ও শিটে অবস্থা।
+              if (AuthService.instance.account == null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const AuthScreen()),
+                );
+                return;
+              }
               unawaited(s.syncNow());
               showSyncSheet(context);
             },

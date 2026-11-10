@@ -20,6 +20,19 @@ class Notifier {
   /// নোটিফিকেশনে ট্যাপ করলে কোন কাস্টমার খুলবে।
   static final ValueNotifier<int?> openCustomer = ValueNotifier(null);
 
+  /// রিক্যাপ/সারাংশ/ব্যবসার নোটিফিকেশনে ট্যাপ করলে কোন দিনের রিপোর্ট খুলবে।
+  static final ValueNotifier<DateTime?> openReport = ValueNotifier(null);
+
+  static void _handlePayload(String? payload) {
+    if (payload == null) return;
+    if (payload.startsWith('report:')) {
+      final ms = int.tryParse(payload.substring('report:'.length));
+      if (ms != null) openReport.value = DateTime.fromMillisecondsSinceEpoch(ms);
+    } else {
+      openCustomer.value = int.tryParse(payload);
+    }
+  }
+
   static Future<void> init() async {
     if (kIsWeb) return; // ওয়েবে শিডিউলড নোটিফিকেশন নেই
     final prefs = await SharedPreferences.getInstance();
@@ -51,8 +64,7 @@ class Notifier {
           requestSoundPermission: false,
         ),
       ),
-      onDidReceiveNotificationResponse: (r) =>
-          openCustomer.value = int.tryParse(r.payload ?? ''),
+      onDidReceiveNotificationResponse: (r) => _handlePayload(r.payload),
     );
 
     await refreshExact();
@@ -67,9 +79,7 @@ class Notifier {
 
     final launch = await _plugin.getNotificationAppLaunchDetails();
     if (launch?.didNotificationLaunchApp ?? false) {
-      openCustomer.value = int.tryParse(
-        launch!.notificationResponse?.payload ?? '',
-      );
+      _handlePayload(launch!.notificationResponse?.payload);
     }
   }
 

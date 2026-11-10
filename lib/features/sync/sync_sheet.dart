@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:hisab_sathi/core/utils/utils.dart';
-import 'package:hisab_sathi/core/widgets/pin_field.dart';
-import 'package:hisab_sathi/features/auth/auth_service.dart';
+import 'package:hisab_sathi/features/auth/auth_screen.dart';
 import 'package:hisab_sathi/features/sync/sync_service.dart';
 
-/// সিঙ্ক বাটন থেকে খোলা শিট: লগইন / সিঙ্কের অবস্থা।
+/// সিঙ্ক বাটন থেকে খোলা শিট: সিঙ্কের অবস্থা। ফোন/PIN এখানে আলাদা করে চাওয়া
+/// হয় না — লগইন সবসময় [AuthScreen]-এর মধ্য দিয়েই হয়, এখানে শুধু তার ফলাফল
+/// (সংযুক্ত/বিচ্ছিন্ন) দেখানো হয়।
 void showSyncSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -27,19 +28,14 @@ class _SyncSheet extends StatefulWidget {
 
 class _SyncSheetState extends State<_SyncSheet> {
   final _sync = SyncService.instance;
-  // অ্যাপে লগইন করা নম্বরই সার্ভারের নম্বর — আলাদা করে চাওয়া হয় না।
-  late final String _phone =
-      AuthService.instance.account?.phone ?? _sync.savedPhone ?? '';
-  final _pin = TextEditingController();
-  final _pinFocus = FocusNode();
   bool _busy = false;
-  String? _err;
 
   @override
   void initState() {
     super.initState();
     if (_sync.loggedIn) return;
-    // সংরক্ষিত PIN থাকলে নিজেই সংযোগ হয়; না হলে (PIN বদলে গেছে) PIN-এর ঘর।
+    // সংরক্ষিত PIN থাকলে চুপচাপ নিজে থেকেই সংযোগ হয়; না পারলে নিচে লগইন
+    // করতে বলা হবে — এখানে আলাদা করে ফোন/PIN চাওয়া হয় না।
     unawaited(_autoRetry());
   }
 
@@ -48,30 +44,6 @@ class _SyncSheetState extends State<_SyncSheet> {
     await _sync.retryConnect();
     if (!mounted) return;
     setState(() => _busy = false);
-    if (!_sync.loggedIn) _pinFocus.requestFocus();
-  }
-
-  @override
-  void dispose() {
-    _pin.dispose();
-    _pinFocus.dispose();
-    super.dispose();
-  }
-
-  Future<void> _submit() async {
-    if (_busy) return;
-    setState(() {
-      _busy = true;
-      _err = null;
-    });
-    final msg = await _sync.connect(_phone, _pin.text);
-    if (!mounted) return;
-    setState(() {
-      _busy = false;
-      _err = msg;
-      if (msg != null) _pin.clear();
-    });
-    if (msg != null) _pinFocus.requestFocus();
   }
 
   @override
@@ -86,48 +58,42 @@ class _SyncSheetState extends State<_SyncSheet> {
       child: ListenableBuilder(
         listenable: _sync,
         builder: (context, _) => SingleChildScrollView(
-          child: _sync.loggedIn ? _status(context) : _form(context),
+          child: _sync.loggedIn ? _status(context) : _loggedOut(context),
         ),
       ),
     );
   }
 
-  Widget _form(BuildContext context) {
+  Widget _loggedOut(BuildContext context) {
     final t = Theme.of(context).textTheme;
-    final cs = Theme.of(context).colorScheme;
-    final ready = _phone.isNotEmpty && _pin.text.length == PinField.pinLength;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text('অনলাইন ব্যাকআপ ও সিঙ্ক', style: t.titleLarge),
         const SizedBox(height: 6),
-        Text(
-          'আপনি অ্যাপে ${bn(_phone)} নম্বরে লগইন করা আছেন। ব্যাকআপ চালু করতে '
-          'শুধু PIN দিন। ইন্টারনেট না থাকলেও অ্যাপ আগের মতোই চলবে।',
-          style: t.bodyMedium,
+        const Text(
+          'ব্যাকআপ চালু করতে লগইন করুন। ইন্টারনেট না থাকলেও অ্যাপ আগের মতোই চলবে।',
         ),
         const SizedBox(height: 16),
-        PinField(
-          controller: _pin,
-          focusNode: _pinFocus,
-          onChanged: () => setState(() {}),
-          onCompleted: _submit,
-        ),
-        if ((_err ?? _sync.error) != null) ...[
-          const SizedBox(height: 10),
-          Text((_err ?? _sync.error)!, style: TextStyle(color: cs.error)),
-        ],
-        const SizedBox(height: 16),
-        FilledButton(
-          onPressed: _busy || !ready ? null : _submit,
-          child: _busy
+        FilledButton.icon(
+          onPressed: _busy
+              ? null
+              : () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AuthScreen()),
+                  );
+                },
+          icon: _busy
               ? const SizedBox(
                   height: 18,
                   width: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('সংযোগ করুন'),
+              : const Icon(Icons.login_rounded),
+          label: const Text('লগইন করুন'),
         ),
       ],
     );

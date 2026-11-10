@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -15,7 +16,11 @@ import 'package:hisab_sathi/core/utils/utils.dart';
 part 'schema.dart';
 part 'store_customers.dart';
 part 'store_entries.dart';
+part 'store_expenses.dart';
 part 'store_logs.dart';
+part 'store_products.dart';
+part 'store_purchases.dart';
+part 'store_sales.dart';
 part 'store_schedule.dart';
 part 'store_stats.dart';
 part 'store_sync.dart';
@@ -38,6 +43,9 @@ class Store extends ChangeNotifier {
   /// balance-এর sign থেকে লাইভ গণনা হয়।
   List<Customer> all = [];
   bool loaded = false;
+
+  /// ক্রয়-বিক্রয়ের প্রোডাক্ট লিস্ট — মেমোরিতে ক্যাশ করা, [refreshProducts] এ রিলোড হয়।
+  List<Product> products = [];
 
   /// আগের নাম ধরে রাখা হলো কম জায়গায় বদলাতে হয় — আসলে সবাই।
   List<Customer> get customers => all;
@@ -66,7 +74,7 @@ class Store extends ChangeNotifier {
       kIsWeb
           ? 'hisab_sathi.db'
           : p.join(await getDatabasesPath(), 'hisab_sathi.db'),
-      version: 8,
+      version: 14,
       onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
       onUpgrade: (db, oldVersion, _) async {
         if (oldVersion < 2) {
@@ -92,6 +100,12 @@ class Store extends ChangeNotifier {
           );
         }
         if (oldVersion < 8) await _unifyBalanceDirection(db);
+        if (oldVersion < 9) await _createPurchaseSaleTables(db);
+        if (oldVersion < 10) await _allowSaleWithoutProduct(db);
+        if (oldVersion < 11) await _addSalesProfitColumn(db);
+        if (oldVersion < 12) await _addProductsUnitColumn(db);
+        if (oldVersion < 13) await _addSalesDiscountColumn(db);
+        if (oldVersion < 14) await _createExpensesTable(db);
       },
       onCreate: (db, _) async {
         await db.execute('''
@@ -130,9 +144,13 @@ class Store extends ChangeNotifier {
           'CREATE INDEX idx_entries_customer ON entries(customer_id)',
         );
         await _createContactLogs(db);
+        await _createPurchaseSaleTables(db);
+        await _addSalesDiscountColumn(db);
+        await _createExpensesTable(db);
       },
     );
     await refresh();
+    await refreshProducts();
   }
 
   Future<void> refresh() async {
@@ -152,6 +170,9 @@ class Store extends ChangeNotifier {
     notifyListeners();
     scheduleDaily();
   }
+
+  /// এক্সটেনশন থেকে `notifyListeners()` protected বলে সরাসরি ডাকা যায় না।
+  void _notify() => notifyListeners();
 
   Customer? byId(int id) {
     for (final c in all) {

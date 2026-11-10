@@ -174,6 +174,9 @@ class SyncService extends ChangeNotifier {
       }
       error = null;
       notifyListeners();
+      // সিঙ্ক শিট থেকে সরাসরি সংযোগ হলেও অ্যাপের লগইন অবস্থা মিলিয়ে রাখা —
+      // নইলে ব্যাকআপ আসলে চালু থাকলেও প্রোফাইলে "লগইন করা নেই" দেখায়।
+      unawaited(AuthService.instance.syncLoggedIn(this.phone!, pin));
       unawaited(syncNow());
       return null;
     } on ApiError catch (e) {
@@ -217,6 +220,10 @@ class SyncService extends ChangeNotifier {
       final es = d.entries.map(entryJson).toList();
       final logsOk = _prefs.getBool(_kLogsOk) ?? false;
       final ls = logsOk ? d.logs.map(logJson).toList() : const [];
+      final ps = d.products.map(productJson).toList();
+      final sls = d.sales.map(saleJson).toList();
+      final pus = d.purchases.map(purchaseJson).toList();
+      final exs = d.expenses.map(expenseJson).toList();
       for (var i = 0; i < cs.length; i += _chunk) {
         await _send(
           'POST',
@@ -242,16 +249,56 @@ class SyncService extends ChangeNotifier {
           },
         );
       }
+      for (var i = 0; i < ps.length; i += _chunk) {
+        await _send(
+          'POST',
+          '/sync/push',
+          body: {'products': ps.skip(i).take(_chunk).toList()},
+        );
+      }
+      for (var i = 0; i < sls.length; i += _chunk) {
+        await _send(
+          'POST',
+          '/sync/push',
+          body: {'sales': sls.skip(i).take(_chunk).toList()},
+        );
+      }
+      for (var i = 0; i < pus.length; i += _chunk) {
+        await _send(
+          'POST',
+          '/sync/push',
+          body: {'purchases': pus.skip(i).take(_chunk).toList()},
+        );
+      }
+      for (var i = 0; i < exs.length; i += _chunk) {
+        await _send(
+          'POST',
+          '/sync/push',
+          body: {'expenses': exs.skip(i).take(_chunk).toList()},
+        );
+      }
       await store.markPushed('customers', d.customers);
       await store.markPushed('entries', d.entries);
       if (logsOk) await store.markPushed('contact_logs', d.logs);
+      await store.markPushed('products', d.products);
+      await store.markPushed('sales', d.sales);
+      await store.markPushed('purchases', d.purchases);
+      await store.markPushed('expenses', d.expenses);
 
       final res = await _send('GET', '/sync/pull?since=$_cursor');
       final logs = (res['logs'] as List?) ?? const [];
+      final products = (res['products'] as List?) ?? const [];
+      final sales = (res['sales'] as List?) ?? const [];
+      final purchases = (res['purchases'] as List?) ?? const [];
+      final expenses = (res['expenses'] as List?) ?? const [];
       await store.applyRemote(
         res['customers'] as List,
         res['entries'] as List,
         logs,
+        products,
+        sales,
+        purchases,
+        expenses,
       );
       await _prefs.setInt(_kCursor, res['cursor'] as int);
       if (!logsOk && res.containsKey('logs')) {
@@ -260,11 +307,22 @@ class SyncService extends ChangeNotifier {
         _again = true;
       }
       lastSyncAt = DateTime.now();
-      lastPushed = d.customers.length + d.entries.length + ls.length;
+      lastPushed =
+          d.customers.length +
+          d.entries.length +
+          ls.length +
+          ps.length +
+          sls.length +
+          pus.length +
+          exs.length;
       lastPulled =
           (res['customers'] as List).length +
           (res['entries'] as List).length +
-          logs.length;
+          logs.length +
+          products.length +
+          sales.length +
+          purchases.length +
+          expenses.length;
       await _prefs.setInt(_kLastAt, lastSyncAt!.millisecondsSinceEpoch);
       await _prefs.setInt(_kLastPushed, lastPushed);
       await _prefs.setInt(_kLastPulled, lastPulled);

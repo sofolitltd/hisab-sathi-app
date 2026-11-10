@@ -67,6 +67,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+dependency_overrides:
+  # sqlite3 3.7.1's bundled Android asset hash doesn't match the binary
+  # pub.dev serves, breaking native asset builds. Pin to the last good version.
+  sqlite3: 3.7.0
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.8
 

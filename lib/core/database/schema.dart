@@ -68,3 +68,143 @@ Future<void> _unifyBalanceDirection(Database db) async {
     [DateTime.now().millisecondsSinceEpoch],
   );
 }
+
+/// ক্রয়-বিক্রয় (v9): প্রোডাক্ট, বিক্রয়, ক্রয়।
+Future<void> _createPurchaseSaleTables(Database db) async {
+  await db.execute('''
+    CREATE TABLE products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      uid TEXT NOT NULL UNIQUE,
+      name TEXT NOT NULL,
+      buy_price REAL NOT NULL DEFAULT 0,
+      sell_price REAL NOT NULL DEFAULT 0,
+      unit TEXT NOT NULL DEFAULT 'piece',
+      updated_at INTEGER NOT NULL,
+      deleted INTEGER NOT NULL DEFAULT 0,
+      dirty INTEGER NOT NULL DEFAULT 1
+    )''');
+  await db.execute('''
+    CREATE TABLE sales (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      uid TEXT NOT NULL UNIQUE,
+      product_id INTEGER REFERENCES products(id),
+      product_uid TEXT NOT NULL DEFAULT '',
+      product_name TEXT NOT NULL DEFAULT '',
+      unit_buy_price REAL NOT NULL DEFAULT 0,
+      unit_sell_price REAL NOT NULL DEFAULT 0,
+      quantity REAL NOT NULL DEFAULT 1,
+      customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+      customer_uid TEXT NOT NULL DEFAULT '',
+      received_amount REAL NOT NULL DEFAULT 0,
+      date INTEGER NOT NULL,
+      note TEXT NOT NULL DEFAULT '',
+      profit REAL,
+      updated_at INTEGER NOT NULL,
+      deleted INTEGER NOT NULL DEFAULT 0,
+      dirty INTEGER NOT NULL DEFAULT 1
+    )''');
+  await db.execute('CREATE INDEX idx_sales_product ON sales(product_id)');
+  await db.execute('CREATE INDEX idx_sales_customer ON sales(customer_id)');
+  await db.execute('''
+    CREATE TABLE purchases (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      uid TEXT NOT NULL UNIQUE,
+      product_id INTEGER NOT NULL REFERENCES products(id),
+      product_uid TEXT NOT NULL,
+      quantity REAL NOT NULL DEFAULT 1,
+      unit_cost REAL NOT NULL DEFAULT 0,
+      date INTEGER NOT NULL,
+      note TEXT NOT NULL DEFAULT '',
+      updated_at INTEGER NOT NULL,
+      deleted INTEGER NOT NULL DEFAULT 0,
+      dirty INTEGER NOT NULL DEFAULT 1
+    )''');
+  await db.execute(
+    'CREATE INDEX idx_purchases_product ON purchases(product_id)',
+  );
+}
+
+/// v10: sales.product_id আগে NOT NULL ছিল, কিন্তু প্রোডাক্ট ছাড়া (ফ্রি-টেক্সট
+/// নাম) বিক্রয় সেভ করা যাচ্ছে এখন — SQLite-এ কলামের NOT NULL সরাসরি বদলানো যায়
+/// না, তাই টেবিল পুনরায় তৈরি করে ডাটা কপি করা হচ্ছে।
+Future<void> _allowSaleWithoutProduct(Database db) async {
+  await db.execute('ALTER TABLE sales RENAME TO sales_old');
+  await db.execute('''
+    CREATE TABLE sales (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      uid TEXT NOT NULL UNIQUE,
+      product_id INTEGER REFERENCES products(id),
+      product_uid TEXT NOT NULL DEFAULT '',
+      product_name TEXT NOT NULL DEFAULT '',
+      unit_buy_price REAL NOT NULL DEFAULT 0,
+      unit_sell_price REAL NOT NULL DEFAULT 0,
+      quantity REAL NOT NULL DEFAULT 1,
+      customer_id INTEGER REFERENCES customers(id) ON DELETE SET NULL,
+      customer_uid TEXT NOT NULL DEFAULT '',
+      received_amount REAL NOT NULL DEFAULT 0,
+      date INTEGER NOT NULL,
+      note TEXT NOT NULL DEFAULT '',
+      updated_at INTEGER NOT NULL,
+      deleted INTEGER NOT NULL DEFAULT 0,
+      dirty INTEGER NOT NULL DEFAULT 1
+    )''');
+  await db.execute('INSERT INTO sales SELECT * FROM sales_old');
+  await db.execute('DROP TABLE sales_old');
+  await db.execute('CREATE INDEX idx_sales_product ON sales(product_id)');
+  await db.execute('CREATE INDEX idx_sales_customer ON sales(customer_id)');
+}
+
+/// v11: লাভ এখন সরাসরি একটা কলামে রাখা হয় (NULL = অজানা) — প্রোডাক্ট লিংক করা
+/// থাকলে (sell-buy)*quantity, নইলে ব্যবহারকারীর হাতে লেখা লাভ (দিলে), নইলে NULL।
+/// রিপোর্টের SUM(profit) স্বয়ংক্রিয়ভাবে NULL বাদ দেয়, তাই আলাদা করে
+/// product_id চেক লাগে না।
+Future<void> _addSalesProfitColumn(Database db) async {
+  await db.execute('ALTER TABLE sales ADD COLUMN profit REAL');
+}
+
+/// v12: products.unit কলামটা v9-এর টেবিল-তৈরির কোডেই (ভুলভাবে) যোগ করা
+/// হয়েছিল, যে ডিভাইস তখনই v9-এ ছিল (table তৈরি হয়ে গেছে) তাদের কলামটা মিস।
+/// table_info চেক করে নেওয়া হচ্ছে — যাদের fresh install-এ অলরেডি আছে, তাদের
+/// আবার ALTER করতে গেলে "duplicate column" এরর হতো।
+Future<void> _addProductsUnitColumn(Database db) async {
+  final cols = await db.rawQuery('PRAGMA table_info(products)');
+  final hasUnit = cols.any((c) => c['name'] == 'unit');
+  if (!hasUnit) {
+    await db.execute(
+      "ALTER TABLE products ADD COLUMN unit TEXT NOT NULL DEFAULT 'piece'",
+    );
+  }
+}
+
+/// v13: বিক্রয়ে ইচ্ছাকৃত ছাড় (discount) আলাদাভাবে রাখা — আগে ক্যাটালগ দামের
+/// চেয়ে কম টাকা পেলে পুরোটাই "বাকি" ধরে কাস্টমারের ledger-এ যুক্ত হয়ে যেত,
+/// যদিও সেটা অনেক সময় আসলে দেওয়া ছাড়, আদায় করার বাকি নয়। [onCreate]-ও
+/// `_createPurchaseSaleTables`-এর ওপর নির্ভর করে বলে ফ্রেশ ইনস্টলেও এই
+/// কলাম লাগবে — তাই দুই জায়গা থেকেই ডাকা হয়, "duplicate column" এড়াতে চেক।
+Future<void> _addSalesDiscountColumn(Database db) async {
+  final cols = await db.rawQuery('PRAGMA table_info(sales)');
+  final hasDiscount = cols.any((c) => c['name'] == 'discount');
+  if (!hasDiscount) {
+    await db.execute(
+      'ALTER TABLE sales ADD COLUMN discount REAL NOT NULL DEFAULT 0',
+    );
+  }
+}
+
+/// v14: ক্যাটেগরি-ভিত্তিক সাধারণ ব্যয় (দোকান ভাড়া, খাবার, বাজার ইত্যাদি) —
+/// প্রোডাক্ট ক্রয়ের (purchases) সাথে সম্পর্কহীন, স্বাধীন টেবিল।
+Future<void> _createExpensesTable(Database db) async {
+  await db.execute('''
+    CREATE TABLE expenses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      uid TEXT NOT NULL UNIQUE,
+      category TEXT NOT NULL,
+      amount REAL NOT NULL DEFAULT 0,
+      date INTEGER NOT NULL,
+      note TEXT NOT NULL DEFAULT '',
+      updated_at INTEGER NOT NULL,
+      deleted INTEGER NOT NULL DEFAULT 0,
+      dirty INTEGER NOT NULL DEFAULT 1
+    )''');
+  await db.execute('CREATE INDEX idx_expenses_date ON expenses(date)');
+}

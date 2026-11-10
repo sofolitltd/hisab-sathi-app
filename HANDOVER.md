@@ -1,9 +1,142 @@
-# হিসাব সাথী (formerly দেনা পাওনা / Baki Khata) — handover (updated 2026-11-07)
+# হিসাব সাথী (formerly দেনা পাওনা / Baki Khata) — handover (updated 2026-11-09)
 
 No secrets in this file. Secrets live in `hisab-sathi-api/.env*`, Vercel env vars, and `~/.baki_khata/`.
 
 ## What it is
 Bangla personal দেনা-পাওনা (debt/credit) tracker — generalized from a shop-credit ledger. Android app (Flutter, offline-first SQLite) + sync API/website (Go). Rebranded 2026-10-27 to **দেনা পাওনা** (briefly "দেনা পাওনা দিবা" for a few minutes, then shortened — app was still local-dev only, not Play Store published, at rebrand time — confirmed with user before renaming applicationId). **Renamed again 2026-11-07 to হিসাব সাথী / Hisab Sathi**: folder `hisab-sathi-app`, Dart package `hisab_sathi`, applicationId `com.sofolit.hisab_sathi`, DB file `hisab_sathi.db`, new public GitHub repo `sofolitltd/hisab-sathi-app` (history kept; old `baki-khata-app` repo left untouched with releases v1.0.2–v1.2.0). API folder renamed `hisab-sathi-api` (Go module `hisab-sathi-api`) and landing text updated, but its GitHub repo, Vercel project and the `bakikhatabd.vercel.app` domain keep the old names on purpose (installed apps sync through that domain). **Released v1.2.0 APKs use `com.sofolit.baki_khata`** (~16 downloads): they cannot update to the new id — those users must install the new app and log in to sync data back.
+
+## Session 2026-11-09 — ক্রয়-বিক্রয় (আয়/ব্যয়) feature: products, sales, purchases
+
+Brand-new feature alongside the existing দেনা-পাওনা tracker: a product catalog, sale ("আয়") and
+purchase ("ব্যয়") entry, auto/manual profit tracking, and a sales report. Entirely uncommitted, on
+top of the already-uncommitted work from earlier sessions below. `dart analyze` clean, `go build`/
+`go vet` clean, debug APK builds. The user tested live on the emulator throughout and reported real
+crashes/UX issues as we went — see "Gotchas" below, two of them were real schema-migration bugs.
+
+### Data model (local SQLite, DB **v9→v12** this session)
+Three new tables, same `uid`/`updated_at`/`deleted`/`dirty` sync shape as everything else:
+- **`products`**: `name`, `buy_price`, `sell_price`, `unit` (`piece` or `amount` — `amount` is for
+  things like বিকাশ/নগদ ক্যাশ-ইন where "quantity" is really a taka figure, not a count).
+- **`sales`**: `product_id` **nullable** (a sale can be free-text, not linked to any saved product —
+  see below), `product_uid`/`product_name` (snapshotted), `unit_buy_price`/`unit_sell_price`
+  (snapshotted), `quantity`, `customer_id` nullable, `received_amount`, `profit` **nullable REAL**
+  (NULL = unknown; see profit design below), `note`, `date`.
+- **`purchases`**: always linked to a real product (`product_id NOT NULL`) — a purchase restocks a
+  product and overwrites its `buy_price` with the new unit cost.
+
+**Two real migration bugs hit and fixed properly this session** (both from editing an *earlier*
+version's table-creation code in place instead of adding a new versioned migration — don't repeat
+this mistake):
+1. `sales.product_id` was originally `NOT NULL`, then the "free-text sale, no product" feature
+   needed it nullable. Editing the v9 `_createPurchaseSaleTables` text in place did nothing for the
+   user's already-created table → crash on insert (`NOT NULL constraint failed: sales.product_id`).
+   Fixed with a real **v10** migration (`_allowSaleWithoutProduct`): rename table, recreate with the
+   column nullable, copy rows across, drop the old one (SQLite can't `ALTER COLUMN`).
+2. Same mistake again for `products.unit` — added to the v9 text after some devices already had the
+   table, so `unit` was missing → crash on insert (`table products has no column named unit`). Fixed
+   with **v12** (`_addProductsUnitColumn`), guarded with `PRAGMA table_info(products)` so it's safe
+   whether or not the column already exists (fresh installs after the fix already have it).
+3. **v11** (`_addSalesProfitColumn`): added the `profit` column itself (nullable, no migration bug
+   this time — done right from the start).
+
+**Lesson for future sessions in this repo**: once a DB version number has shipped to the user's test
+device (i.e. they've run a build with it), **never edit that version's table-creation function
+again** — always add a new `if (oldVersion < N) ...` step. This bit us twice in one session.
+
+### Profit design — cash-basis, not catalog margin (changed mid-session per user request)
+Original (wrong) design: `profit = (catalog sell_price − buy_price) × quantity`, stored regardless
+of what was actually collected. The user caught the real problem: a discount or an unpaid বাকি was
+being counted as fully-realized profit immediately, which double-counts — the বাকি portion also
+goes into the customer's ledger as a receivable.
+
+**Final design**: `profit = received_amount − (buy_price × quantity)` — profit reflects only money
+actually in hand *today*. The বাকি portion still goes into the customer's ledger exactly as before
+(unaffected), but isn't counted as this sale's profit. **Known limitation, not addressed**: when
+that বাকি later gets collected, nothing re-attributes that profit back to the original sale — it's
+cash accounting without any mechanism to "release" deferred profit on later collection. Flagged to
+the user as a tradeoff (accrual would need linking a later বাকি repayment back to this sale's cost
+basis — decided not worth the complexity for a small-shop tool). If profit reports feel
+systematically low on days with lots of বাকি sales, this is why.
+
+When no product is linked (free-text sale name): `profit` is `null` unless the user manually types
+one into an optional "লাভ (ঐচ্ছিক)" field (shown only when no product is matched); manual profit is
+stored as-is. Report aggregates (`profitBetween`/`dailyProfit`/`productBreakdown` in
+`store_sales.dart`) now just `SUM(profit)` — SQL ignores NULLs automatically, so unknown-profit sales
+are correctly excluded from totals without any `CASE WHEN product_id IS NOT NULL` gymnastics (that
+was the pre-v11 approach, replaced).
+
+### Sale flow design — product and customer are both optional free text
+A sale does **not** require picking a saved product or an existing customer:
+- **Product field** (`ProductNameField`, `lib/features/purchase_sale/widgets/`): `Autocomplete`
+  against saved products, same shape as `EntryNameField`. Typing a name that doesn't match anything
+  shows an inline "\"…\" প্রোডাক্ট লিস্টে যুক্ত করুন" button (opens `product_form_sheet.dart`
+  pre-filled). Once picked/matched, shown as a removable chip instead of the field.
+- **Customer field** reuses `EntryName Field` directly (added an `autofocus` param to it so it
+  doesn't steal focus from the amount field) — typing an unmatched name silently creates a new
+  customer on save, exact-match reuses the existing one, same logic as `entry_sheet.dart`'s
+  `_save()`. Shown as `PickedCustomerChip` once resolved.
+- **Quantity defaults to 1** if left blank — "mainly the money matters" per the user's framing.
+- A "সাম্প্রতিক" horizontal chip row above the product field shows the most-recently-sold distinct
+  products (`Store.recentlySoldProducts()`, joins `sales`→`products` by `MAX(date)`), for one-tap
+  repeat sales (useful for repetitive items like mobile-card sales).
+
+### UI structure (`lib/features/purchase_sale/`)
+- `sale_screen.dart` (আয় tab) — entry form (product chip/field + customer chip/field, amount+quantity
+  row in a fixed `SizedBox(height: 64, expands: true)` so both fields render the same height
+  regardless of font size, live profit/loss preview or manual-profit field, date+time pickers),
+  compact মোট/লাভ/বাকি totals (plain `_TotalCard`s, no icons — user explicitly asked icons removed
+  and text kept large), then a "বিস্তারিত দেখুন" button.
+- `purchase_screen.dart` (ব্যয় tab) — simpler, always needs a real product (restocking updates its
+  buy price).
+- `sale_detail_sheet.dart` — tap any sale (from the history screen) to edit every field or delete it.
+  **Does not** touch any বাকি ledger entry that was auto-created at original save time if the due
+  amount changes on edit — that stays an independent, un-reconciled entry. Flagged to the user,
+  not fixed (would need linking entries back to sales, which doesn't exist).
+- `sale_history_screen.dart` — full today's-sales list (moved out of the main tab to keep it clean,
+  per user request), with a mic/speaker icon in the AppBar that uses the existing `Voice.instance`
+  TTS to read today's total/profit/due and which products sold aloud; tapping again stops it.
+- `report_screen.dart` — period-based আয় রিপোর্ট (reuses `StatsPeriod`/`RangeNav`/`MetricCard`/
+  `StatsSection` from the existing `features/stats/` widgets).
+- `product_list_screen.dart` / `product_form_sheet.dart` / `widgets/product_picker.dart` — catalog
+  CRUD; form has a `SegmentedButton` for `unit` (পিস vs টাকা).
+
+### Nav (`lib/features/home/shell.dart`) — went through several redesigns this session
+Ended up at: হোম, ব্যক্তি, a **raised rounded-square button** (not a circle — user asked specifically
+for border-radius, not fully round) floating above the bar for আয়, then ব্যয়, then প্রোফাইল — 5
+destinations total. The raised button is a `Positioned` overlay on a `Stack`, **not**
+`Scaffold.floatingActionButton`/`centerDocked` — that slot is still used for the per-tab
+"নতুন এন্ট্রি"/"নতুন ব্যক্তি" FAB on হোম/ব্যক্তি exactly as before this session (the user explicitly
+asked for those **not** to be touched). Earlier iterations (notched `BottomAppBar` +
+`centerDocked`, then a menu-sheet opening Sale/Purchase/Report) were tried and discarded per
+feedback — if revisiting nav, this history explains why it isn't the "obvious" `BottomAppBar`
+approach.
+
+Labels: "বিক্রয়" → "আয়", "ক্রয়" → "ব্যয়" everywhere user-facing (titles, buttons, snackbars, profile
+section). Internal identifiers/comments still say বিক্রয়/ক্রয় — not renamed, user only asked for the
+visible words.
+
+### Sync (app ↔ API) — all wired
+`products`/`sales`/`purchases` (incl. `unit` and `profit`) go through `sync_api.dart`/
+`store_sync.dart` on the app side and `schema.sql` (idempotent `ALTER ... ADD COLUMN IF NOT EXISTS`,
+same pattern as `extra_phones`/`plan`)/`dto.go`/`push.go`/`pull.go` on the API side — same
+last-write-wins/`seq`-cursor design as customers/entries. `sales.profit` is `*float64` in the Go DTO
+(nullable). `sales.product_uid` can be empty string (sentinel for "no product"), handled on both the
+Postgres side (no FK, just a soft text reference) and the app's merge logic in `store_sync.dart`
+(empty string ≠ "not yet synced", only non-empty-but-missing-locally skips the row).
+
+### Not verified / open (this feature)
+- None of this is committed (same as the rest of this file's uncommitted work) or deployed. The Go
+  API changes need deploying (and the DB migration there is additive/idempotent per the usual
+  pattern, so safe) before any real device syncs through it.
+- Not tested: multi-device sync of the new tables end-to-end (only single-device local DB tested).
+- The বাকি-ledger-entry-not-reconciled-on-edit/delete limitation above.
+- The cash-basis-vs-accrual profit limitation above — the user agreed with cash-basis but hasn't
+  used it live long enough to judge whether "profit looks low on বাকি-heavy days" bothers them in
+  practice.
+- `sale_history_screen.dart`'s TTS summary only covers today; no period picker there (that's what
+  `report_screen.dart` is for, separately).
+- Architecture note: `DB schema version is 8` further down in this file is now **stale** — it's 12
+  as of this session (customers/entries unchanged, the jump is entirely this feature's migrations).
 
 ## Session 2026-11-07 — direction fixes, pabo/debo split everywhere, statement print
 
@@ -109,7 +242,7 @@ Implemented the redesign analyzed at the end of part 2. `flutter analyze` clean.
 - Latest release: v1.2.0 (https://github.com/sofolitltd/baki-khata-app/releases, old repo). Next releases go to https://github.com/sofolitltd/hisab-sathi-app/releases. API is tagged with the same version (`baki-khata-api`, Linux binary attached; the user only wants Linux for Go and Android for Flutter). Site's Download button -> `/download` -> 302 to `hisab-sathi-app/releases/latest/download/hisab-sathi.apk` (landing changed locally 2026-11-07: **do not deploy the API until the first hisab-sathi-app release exists**, or the download link 404s).
 
 ## Run locally
-- `hisab-sathi-app`: `make run-e` (emulator-5554, API at 10.0.2.2:8080), `make run-d [DEVICE=id]` (real phone via LAN IP), `make run` (starts API), `make devices`.
+- `hisab-sathi-app`: `make run-e-l` (emulator-5554 + local API at 10.0.2.2:8080), `make run-e-p` (emulator + live API), `make run-r-l [DEVICE=id]` (real phone + local API via LAN IP), `make run-r-p [DEVICE=id]` (real phone + live API), `make run` (starts local API), `make devices`.
 - `hisab-sathi-api`: `make run` (kills old process on :8080 first), `make landing` / `npm run landing` rebuilds `landing/app.css` (Tailwind v4 CLI) — **commit the built `app.css`**.
 - Debug builds use localhost/10.0.2.2; **release builds default to `bakikhatabd.vercel.app`** (`lib/core/config.dart`), override with `--dart-define=API_URL=`.
 
@@ -133,7 +266,7 @@ Hard rule from the user: **no file over 300 lines**, in either repo. Split by fe
 App (`lib/`, package `hisab_sathi`, imports are `package:hisab_sathi/...`):
 - `main.dart` boots the services; `app.dart` is the `MaterialApp`.
 - `core/` holds what every feature shares: `database/` (`Store`, one library split into `part` files by domain: customers, entries, logs, schedule, stats, sync, plus `schema.dart` migrations), `models/` (one file per entity, `models.dart` re-exports them), `notifications/` (`Notifier` + `DailyNotifier` part), `voice/` (`voice.dart` re-exports numbers, phonetic and `MicButton`), `photo/`, `theme/`, `utils/`, `widgets/` (`NameAvatar`, `PinField`, `PhoneField`, `confirmDelete`), `ledger.dart`, `l10n.dart`, `config.dart`. `core/` never imports from `features/`.
-- `features/<name>/` holds screens, sheets and a `widgets/` folder: `auth`, `sync`, `home` (shell + top bar), `dashboard`, `customers` (list, filters, card, picker, people list, audio player), `customer_detail` (screen, form, edit-entry and reminder sheets, `openCustomer`), `entries` (entry sheet, due reminder), `installment`, `contact_log`, `stats`, `profile`, `printing`, `statement`. `contact_log.dart` and `installment.dart` are barrels exposing each feature's public API.
+- `features/<name>/` holds screens, sheets and a `widgets/` folder: `auth`, `sync`, `home` (shell + top bar), `dashboard`, `customers` (list, filters, card, picker, people list, audio player), `customer_detail` (screen, form, edit-entry and reminder sheets, `openCustomer`), `entries` (entry sheet, due reminder), `installment`, `contact_log`, `stats`, `profile`, `printing`, `statement`, `purchase_sale` (products/sales/purchases — আয়/ব্যয়, added Session 2026-11-09). `contact_log.dart` and `installment.dart` are barrels exposing each feature's public API.
 - Big private classes were split with `part` files (Store, print painter, statement image) so behaviour didn't change.
 
 API (`hisab-sathi-api`): `main.go` wires everything; `internal/database`, `internal/auth`, `internal/datasync` (`/sync/*`), `internal/landing` (+ `web/` assets).
@@ -145,7 +278,7 @@ API (`hisab-sathi-api`): `main.go` wires everything; `internal/database`, `inter
 - Voice: `lib/core/voice/` — TTS (`flutter_tts`, Bangla voice only, Bangla number words) on home hero, customer screen and the customers list player (`lib/features/customers/audio_list_sheet.dart`); `MicButton` (`speech_to_text`) on both searches, entry amount (parses spoken Bangla numbers), notes and name fields. Needs RECORD_AUDIO (declared). Depends on Google speech/TTS having Bangla on the device.
 - Calls/SMS from the UI go through `callAndLog`/`smsAndLog` (`lib/features/contact_log/`), which pick a number when there are several and write a contact-history row; the raw launchers are `callPhone`/`sendSms` in `lib/core/utils/utils.dart` (manifest `<queries>` for tel/sms/RecognitionService/TTS_SERVICE present).
 - Shared pieces: `CustomerCard` (customers list + home search), `DueReminderFields` / `confirmReminderAt` (`lib/features/entries/due_reminder.dart`), `pickCustomer` (`lib/features/customers/customer_picker.dart`).
-- DB schema version is 8 (`lib/core/database/`, `onUpgrade` steps are cumulative — v8 is the balance-direction unification, see Session 2026-10-27 part 2 above).
+- DB schema version is 12 (`lib/core/database/`, `onUpgrade` steps are cumulative — v8 is the balance-direction unification (Session 2026-10-27 part 2 above), v9-v12 are the ক্রয়-বিক্রয় feature (Session 2026-11-09 above): products/sales/purchases tables, nullable `sales.product_id`, `sales.profit`, `products.unit`).
 - Landing is embedded in the Go binary (`internal/landing/landing.go`, `go:embed` of `internal/landing/web/`). `Dockerfile.vercel` copies `main.go` + `internal/`, so new landing files only need adding to the embed directive. Gin `GET` routes don't answer HEAD (use GET when testing).
 - Same Neon DB is used by local API runs and prod — don't write demo data through the API.
 

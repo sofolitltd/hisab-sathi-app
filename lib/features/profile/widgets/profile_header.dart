@@ -18,28 +18,33 @@ class ProfileHeader extends StatelessWidget {
   Widget _guestHeader(BuildContext context) {
     final t = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
-    return Column(
+    return Row(
       children: [
-        const SizedBox(height: 8),
         CircleAvatar(
-          radius: 48,
+          radius: 32,
           backgroundColor: cs.surfaceContainerHighest,
           child: Icon(
             Icons.person_outline_rounded,
-            size: 48,
+            size: 32,
             color: cs.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 12),
-        Text(
-          'লগইন করা নেই',
-          style: t.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          'লোকাল খাতাই চলছে — নিচে লগইন করলে ব্যাকআপ/সিঙ্ক চালু হবে',
-          textAlign: TextAlign.center,
-          style: t.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'লগইন করা নেই',
+                style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'লোকাল খাতাই চলছে — নিচে লগইন করলে ব্যাকআপ/সিঙ্ক চালু হবে',
+                style: t.bodySmall?.copyWith(color: cs.onSurfaceVariant),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -48,19 +53,26 @@ class ProfileHeader extends StatelessWidget {
   Widget _header(BuildContext context, Account acc) {
     final t = Theme.of(context).textTheme;
     final cs = Theme.of(context).colorScheme;
-    return Column(
+    return Row(
       children: [
-        const SizedBox(height: 8),
-        ProfileAvatar(acc, radius: 48),
-        const SizedBox(height: 12),
-        Text(
-          acc.name,
-          style: t.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          bn(acc.phone),
-          style: t.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+        ProfileAvatar(acc, radius: 32),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                acc.name,
+                style: t.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                bn(acc.phone),
+                style: t.bodyMedium?.copyWith(color: cs.onSurfaceVariant),
+              ),
+            ],
+          ),
         ),
       ],
     );

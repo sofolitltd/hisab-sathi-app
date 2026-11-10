@@ -7,6 +7,13 @@ const brandDark = Color(0xFF4DB6AC); // ডার্ক মোডে একট�
 const bakiColor = Color(0xFFDC2626); // বাকি = লাল
 const jomaColor = Color(0xFF059669); // জমা = সবুজ
 
+// ক্রয়-বিক্রয় মডিউল: বিক্রয় = জমার মতো সবুজ (টাকা আসছে), ক্রয় = বাকির মতো লাল
+// (টাকা যাচ্ছে), রিপোর্ট/প্রোডাক্ট = নিউট্রাল ব্র্যান্ড রঙ।
+const saleColor = jomaColor;
+const purchaseColor = bakiColor;
+const reportColor = Color(0xFF7C3AED); // বেগুনি — পাওনা/দেনার রঙের সাথে না মিশতে
+const expenseColor = Color(0xFFEA580C); // কমলা — সাধারণ (ক্যাটেগরি) ব্যয়
+
 /// অ্যাপ-জোড়া একটাই থিম — আগে পাওনা/দেনা মোড অনুযায়ী রঙ বদলাতো, এখন
 /// কোনো গ্লোবাল মোড নেই তাই একটাই স্থির ব্র্যান্ড রঙ।
 ThemeData buildTheme(Brightness brightness) {

@@ -32,6 +32,18 @@ String taka(num value) => '৳ ${bn(_money.format(value.abs()))}';
 
 String fmtDate(DateTime d) => bn(DateFormat('d MMMM yyyy', 'bn').format(d));
 String fmtShortDate(DateTime d) => bn(DateFormat('d MMM', 'bn').format(d));
+
+/// সংক্ষিপ্ত সাংখ্যিক তারিখ (dd/mm/yy) — ক্রয়-বিক্রয়ের মতো ঘন-ঘন তারিখ
+/// দেখাতে হয় এমন জায়গায়, যেখানে পুরো মাসের নাম লেখার জায়গা নেই।
+String fmtDateDMY(DateTime d) => bn(DateFormat('dd/MM/yy').format(d));
+
+/// AM/PM স্পষ্ট করে দেখানো সময় (যেমন "১:১৬ PM") — ক্রয়-বিক্রয়ে ব্যবহৃত, যেখানে
+/// শুধু বাংলা দিনের ভাগ (দুপুর/বিকাল) দিয়ে কোনটা AM কোনটা PM বোঝা কঠিন।
+String fmtTimeAmPm(int hour, int minute) {
+  final period = hour < 12 ? 'AM' : 'PM';
+  final h12 = hour % 12 == 0 ? 12 : hour % 12;
+  return '${bn('$h12:${minute.toString().padLeft(2, '0')}')} $period';
+}
 String fmtDateTime(DateTime d) =>
     '${bn(DateFormat('d MMM', 'bn').format(d))}, ${fmtTime(d.hour, d.minute)}';
 

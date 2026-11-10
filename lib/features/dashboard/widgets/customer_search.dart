@@ -35,11 +35,14 @@ class _CustomerSearchState extends State<CustomerSearch> {
   }
 
   @override
-  Widget build(BuildContext context) => SearchAnchor.bar(
+  Widget build(BuildContext context) => SearchAnchor(
     searchController: _controller,
-    barHintText: 'নাম বা মোবাইল দিয়ে খুঁজুন',
-    barElevation: const WidgetStatePropertyAll(0),
-    barTrailing: [MicButton(onText: _voice)],
+    viewHintText: 'নাম বা মোবাইল দিয়ে খুঁজুন',
+    builder: (context, controller) => IconButton(
+      tooltip: 'খুঁজুন',
+      icon: const Icon(Icons.search_rounded),
+      onPressed: () => controller.openView(),
+    ),
     viewTrailing: [
       IconButton(
         tooltip: 'মুছুন',
